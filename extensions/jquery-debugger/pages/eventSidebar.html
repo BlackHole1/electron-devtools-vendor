@@ -1,0 +1,31 @@
+<html>
+<head>
+	<script src="../js/main.js"></script>
+	<script src="../js/jquery-1.7.1.min.js"></script>
+	<script src="../js/eventSidebar.js"></script>
+</head>
+<body>
+	<style>
+		body{margin:2px 4px;}
+		#accordion .noProperties{color:black;text-align: center;font-style: italic;font-size: 10px;padding:6px 0 0 22px;}
+		#accordion *{-webkit-user-select:none;user-select:none;color:#881391;font-size: 12px;font-family: Consolas, Lucida Console, monospace;}
+		#accordion ol{list-style-type: none;padding-left:12px;}
+		#accordion li{text-overflow: ellipsis;overflow:hidden;}
+		#accordion .delegator{cursor:default;}
+		#accordion .black,#accordion .saperator{color:black;white-space: pre;}
+		#accordion .red{color:#C41A16;white-space: pre;-webkit-user-select:text;user-select:text;}
+		#accordion .code .red {-webkit-user-select:none; user-select:none;}
+		#accordion .triggerBtn{opacity:0;-webkit-transition:opacity 200ms linear;margin-left:4px;color:#C41A16;cursor:pointer;}
+		#accordion .triggerBtn:hover{text-decoration:underline;}
+		#accordion li:hover .triggerBtn{opacity:1;}
+		#accordion .triengle{cursor:pointer;background:url('../images/triangle.png') no-repeat;width:8px;height:8px;display:inline-block;-webkit-transform: rotate(-90deg);
+			-webkit-transition: -webkit-transform 0.2s linear;margin-right: 3px;
+		}
+		#accordion li.expend .triengle{-webkit-transform: rotate(0deg);}
+		#accordion li + ol{overflow:hidden;}
+		#accordion li:not(.expend)+ol{height:0px;}
+	</style>	
+	<div id="accordion">
+	</div>
+</body>
+</html>

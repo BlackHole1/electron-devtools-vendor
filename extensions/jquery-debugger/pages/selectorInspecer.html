@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		#selectorsList li span{position:relative; z-index:0;}
+		#selectorsList li{position:relative;cursor:pointer;}
+		#selectorsList li .background{position:absolute;padding:2px 4px 2px 5px;margin-left:-5px; background:red;height:1em;display:block;opacity:0;-webkit-transition:opacity 300ms linear,width 300ms cubic-bezier(0.8,-.5,0.2,1.5),left 300ms cubic-bezier(0.8,-.5,0.2,1.5);border-radius:8px;top:0;z-index:-1;left:12px;}
+		#selectorsList li .background.show{opacity:0.3;}
+		
+		/** minusBtn **/
+		#selectorsList li:hover .minusBtn{visibility:visible;}
+		/*#selectorsList li .minusBtn{visibility:hidden;padding: 5px 4px;top: 2px;height: 3px;width: 8px;
+			background: 4px 5px no-repeat -webkit-gradient(linear, 0% 100%, 0% 0%, color-stop(0.11, #2E2E2E), to(#D6D6D6));
+			background-size: 8px 3px;display: inline-block;}
+		#selectorsList li .minusBtn:hover{background: 4px 5px no-repeat -webkit-gradient(linear, 0% 100%, 0% 0%, color-stop(0.11, #2E2E2E), to(#D6D6D6)),5px 6px no-repeat -webkit-gradient(linear, 0% 100%, 0% 0%, color-stop(0.11, #2E2E2E), to(#D6D6D6));
+			background-size: 8px 3px;}*/
+		
+		#selectorsList li .minusBtn{
+			visibility:hidden;
+			top: 3px;
+			height: 10px;
+			width: 10px;
+			background: no-repeat url(../images/delete_icon.png);
+			display: inline-block;
+			margin-right: 3px;
+			padding: 3px;
+			background-position: 3px 3px;
+		}
+		
+		#selectorsList li .editBtn{
+			-webkit-transform: rotate(180deg);
+			transform: rotate(180deg);
+			visibility:hidden;
+			top: 3px;
+			height: 10px;
+			width: 10px;
+			background: no-repeat url(../images/triangle.png);
+			padding: 3px;
+			background-position: 4px 5px;
+			display: inline-block;
+		}
+		
+		/** editBtn **/
+		#selectorsList li:hover .editBtn{visibility:visible;}
+		/*#selectorsList li .editBtn{visibility:hidden;padding: 5px 4px;top: 2px;height: 3px;width: 8px;
+			background: 4px 5px no-repeat -webkit-gradient(linear, 0% 100%, 0% 0%, color-stop(0.11, red), to(#D6D6D6));
+			background-size: 8px 3px;display: inline-block;}
+		#selectorsList li .editBtn:hover{background: 4px 5px no-repeat -webkit-gradient(linear, 0% 100%, 0% 0%, color-stop(0.11, #2E2E2E), to(#D6D6D6)),5px 6px no-repeat -webkit-gradient(linear, 0% 100%, 0% 0%, color-stop(0.11, #2E2E2E), to(#D6D6D6));
+			background-size: 8px 3px;}*/
+			
+		#statistics{white-space: nowrap; display: inline-block; width: auto;}
+		#selectorsList{list-style: none;padding: 0 2px;margin: 32px 0 0 0;}
+		#menuBar{position:fixed; top:0; left:0; right:0;z-index:5; background:-webkit-gradient( linear, left bottom, left top, color-stop(0, #E6E6E6), color-stop(0.03, #FAFAFA), color-stop(0.97, #FAFAFA), color-stop(1, #E6E6E6), color-stop(0.24, #E6E6E6)); padding: 3px 9px;}
+		#menuBar > * {float: left; margin-right: 2px;}
+		#menuBar > img {height: 16px; margin-top: 3px; margin-bottom: 5px;}
+		body{margin: 0;}
+		.menuBtn{border:1px solid transparent;border-radius:4px;padding: 0 4px;cursor:pointer;}
+		.menuBtn:hover{border-color:#777;}
+		#selectorInput{width:200px; transition: width 0.3s}
+		*:not(input){-webkit-user-select:none; user-select:none;}
+		#helpBtn{float:right;}
+	</style>
+	<script src="../js/main.js"></script>
+</head>
+<body>
+	<div id="menuBar">
+		<input id="selectorInput" placeholder="insert selector to inspect" type="text" value=""/>
+		<!-- #id div.bla[attr=3] + p -->
+		<img id="plusBtn" class="menuBtn" title="add selector to the list below" src="../images/plus16.png"/>
+		<img id="refreshBtn" class="menuBtn" title="refresh all the inspected selectors" src="../images/refreash16.png" />
+		<!--<img id="helpBtn" class="menuBtn" title="get help in our site" src="help16.png" />-->
+		<span id="statistics"></span>
+	</div>
+	<ul id="selectorsList">
+	</ul>
+	<script src="../js/jquery-1.7.1.min.js"></script>
+	<script src="../js/autoGrowInput_jQueryPlugin.js"></script>
+	<script src="../js/selectorInspector.js"></script>
+</body>
+</html>
