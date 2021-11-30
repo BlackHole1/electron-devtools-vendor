@@ -1,10 +1,10 @@
 {
   "name": "electron-devtools-vendor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
-    "postinstall": "husky install",
+    "prepare": "husky install",
     "lint": "node ./scripts/lint.js",
     "add": "extension-flat --output=./extensions --crxDir=./crx"
   },
