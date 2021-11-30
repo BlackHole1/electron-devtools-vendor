@@ -1,6 +1,6 @@
 {
-  "name": "@netless/electron-extension-vendor",
-  "version": "1.0.3",
+  "name": "electron-devtools-vendor",
+  "version": "1.0.0",
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
@@ -8,7 +8,7 @@
     "lint": "node ./scripts/lint.js",
     "add": "extension-flat --output=./extensions --crxDir=./crx"
   },
-  "repository": "git@github.com:netless-io/electron-extension-vendor.git",
+  "repository": "git@github.com:BlackHole1/electron-devtools-vendor.git",
   "author": "Black-Hole1 <158blackhole@gmail.com>",
   "license": "MIT",
   "devDependencies": {
