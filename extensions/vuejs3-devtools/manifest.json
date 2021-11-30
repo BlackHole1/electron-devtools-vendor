@@ -22,9 +22,8 @@
     "persistent": false
   },
   "permissions": [
-    "<all_urls>",
-    "contextMenus",
-    "storage"
+    "storage",
+    "<all_urls>"
   ],
   "content_scripts": [
     {

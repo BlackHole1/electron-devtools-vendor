@@ -46,10 +46,16 @@ function removeUnSupportManifest(extensionPath) {
         "homepage_url",
         "page_action",
         "short_name",
+        "commands",
+        "author",
     ];
 
     for (const field of removeFields) {
         delete manifestContent[field];
+    }
+
+    if ("permissions" in manifestContent) {
+        manifestContent["permissions"] = ["storage", "<all_urls>"];
     }
 
     fs.writeFileSync(manifestPath, JSON.stringify(manifestContent, null, 2));

@@ -3,25 +3,6 @@
   "name": "Redux DevTools",
   "description": "Redux DevTools for debugging application's state changes.",
   "manifest_version": 2,
-  "commands": {
-    "devtools-left": {
-      "description": "DevTools window to left"
-    },
-    "devtools-right": {
-      "description": "DevTools window to right"
-    },
-    "devtools-bottom": {
-      "description": "DevTools window to bottom"
-    },
-    "devtools-remote": {
-      "description": "Remote DevTools"
-    },
-    "_execute_page_action": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+E"
-      }
-    }
-  },
   "icons": {
     "16": "img/logo/16x16.png",
     "48": "img/logo/48x48.png",
@@ -65,12 +46,8 @@
     ]
   },
   "permissions": [
-    "notifications",
-    "contextMenus",
     "storage",
-    "file:///*",
-    "http://*/*",
-    "https://*/*"
+    "<all_urls>"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; style-src * 'unsafe-inline'; img-src 'self' data:;",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsdJEPwY92xUACA9CcDBDBmbdbp8Ap3cKQ0DJTUuVQvqb4FQAv8RtKY3iUjGvdwuAcSJQIZwHXcP2aNDH3TiFik/NhRK2GRW8X3OZyTdkuDueABGP2KEX8q1WQDgjX/rPIinGYztUrvoICw/UerMPwNW62jwGoVU3YhAGf+15CgX2Y6a4tppnf/+1mPedKPidh0RsM+aJY98rX+r1SPAHPcGzMjocLkqcT75DZBXer8VQN14tOOzRCd6T6oy7qm7eWru8lJwcY66qMQvhk0osqEod2G3nA7aTWpmqPFS66VEiecP9PgZlp8gQdgZ3dFhA62exydlD55JuRhiMIR63yQIDAQAB"

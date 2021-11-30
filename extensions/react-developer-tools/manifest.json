@@ -25,9 +25,8 @@
     "persistent": false
   },
   "permissions": [
-    "file:///*",
-    "http://*/*",
-    "https://*/*"
+    "storage",
+    "<all_urls>"
   ],
   "content_scripts": [
     {

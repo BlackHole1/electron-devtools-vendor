@@ -2,7 +2,6 @@
   "name": "Backbone Debugger",
   "version": "0.4.1",
   "description": "Developer Tools extension for debugging Backbone.js applications.",
-  "author": "Manuel Dell'Elce and contributors",
   "icons": {
     "16": "img/extension16.png",
     "48": "img/extension48.png",
@@ -35,6 +34,7 @@
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "permissions": [
-    "tabs"
+    "storage",
+    "<all_urls>"
   ]
 }
