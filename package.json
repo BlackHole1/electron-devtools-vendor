@@ -4,13 +4,19 @@
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
+    "postinstall": "husky install",
+    "lint": "node ./scripts/lint.js",
     "add": "extension-flat --output=./extensions --crxDir=./crx"
   },
   "repository": "git@github.com:netless-io/electron-extension-vendor.git",
   "author": "Black-Hole1 <158blackhole@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@netless/extension-flat": "^1.0.1"
+    "@netless/extension-flat": "^1.0.1",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.1.2",
+    "prettier": "^2.5.0",
+    "rimraf": "^3.0.2"
   },
   "files": [
     "extensions",
