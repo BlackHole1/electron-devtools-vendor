@@ -1,1 +1,1 @@
-export declare type REACT_DEVTOOLS = string;
+export declare const REACT_DEVTOOLS = string;
