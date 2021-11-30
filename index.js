@@ -11,3 +11,4 @@ module.exports.APOLLO_DEVELOPER_TOOLS = extensionPath("apollo-developer-tools");
 module.exports.MOBX_DEVTOOLS = extensionPath("mobx-devtools");
 module.exports.CYCLEJS_DEVTOOL = extensionPath("cyclejs-devtool");
 module.exports.ANGULARJS_BATARANG = extensionPath("angularjs-batarang");
+module.exports.JQUERY_DEBUGGER = extensionPath("jquery-debugger");
