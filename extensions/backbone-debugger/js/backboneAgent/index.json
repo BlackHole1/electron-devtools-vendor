@@ -1,0 +1,44 @@
+{
+    "scripts": [
+        "../lib/watch.js",
+
+        "Modules.js",
+        "utils.js",
+        "debug.js",
+
+        "Component.js",
+
+        "port.js",
+
+        "hidden.js",
+
+        "models/Model.js",
+        "models/AppComponentAction.js",
+        "models/AppComponentInfo.js",
+
+        "collections/Collection.js",
+        "collections/AppComponentActions.js",
+        "collections/appComponentsInfos.js",
+
+        "database.js",
+
+        "filters/Filter.js",
+        "filters/SearchFilter.js",
+        "filters/filters.js",
+
+        "controllers/backboneController.js",
+        "controllers/backboneComponentController.js",
+        "controllers/AppComponentController.js",
+        "controllers/AppDataComponentController.js",
+        "controllers/appViewController.js",
+        "controllers/appModelController.js",
+        "controllers/appCollectionController.js",
+        "controllers/appRouterController.js",
+
+        "Reader.js",
+        "DedicatedServer.js",
+        "server.js",
+
+        "backboneAgent.js"
+    ]
+}
