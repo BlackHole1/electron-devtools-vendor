@@ -22,11 +22,8 @@
     "persistent": false
   },
   "permissions": [
-    "http://*/*",
-    "https://*/*",
-    "file:///*",
-    "contextMenus",
-    "storage"
+    "storage",
+    "<all_urls>"
   ],
   "content_scripts": [
     {
