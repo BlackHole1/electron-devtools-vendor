@@ -1,3 +1,6 @@
 const path = require("path");
 
-module.exports.REACT_DEVTOOLS = path.join(__dirname, "extensions", "react-devtools");
+const extensionPath = name => path.join(__dirname, "extensions", name);
+
+module.exports.REACT_DEVTOOLS = extensionPath("react-devtools");
+module.exports.EMBER_INSPECTOR = extensionPath("ember-inspector");

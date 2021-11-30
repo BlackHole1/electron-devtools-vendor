@@ -1,0 +1,1672 @@
+@charset "UTF-8";
+:root {
+  /* stylelint-disable value-keyword-case */
+  --font-sans-serif: "Inter", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Cantarell", "Oxygen", "Ubuntu", "Helvetica Neue", helvetica, arial, sans-serif;
+  --font-monospace: "SF Mono", Menlo, Monaco, monospace;
+  /* stylelint-enable value-keyword-case */
+  --inherit: inherit;
+  --unit0: 0;
+  --unit1: 4px;
+  --unit2: calc(var(--unit1) * 2);
+  --unit3: calc(var(--unit1) * 3);
+  --unit4: calc(var(--unit1) * 4);
+  --unit5: calc(var(--unit1) * 5);
+  --unit6: calc(var(--unit1) * 6);
+  --unit7: calc(var(--unit1) * 7);
+  --unit8: calc(var(--unit1) * 8);
+  --unit9: calc(var(--unit1) * 9);
+  --unit10: calc(var(--unit1) * 10);
+  --unit11: calc(var(--unit1) * 11);
+  --unit12: calc(var(--unit1) * 12);
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.2rem;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body,
+input {
+  color: var(--base14);
+  font-family: var(--font-sans-serif);
+}
+
+body,
+div,
+nav {
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 1.2rem;
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: var(--inherit);
+}
+
+code {
+  font-family: var(--font-monospace);
+}
+
+.theme--light {
+  --base00: #ffffff;
+  --base01: #f3f3f3;
+  --base02: #ededed;
+  --base03: #d6d6d6;
+  --base04: #d1d1d1;
+  --base05: #cacaca;
+  --base06: #b3b3b3;
+  --base07: #a3a3a3;
+  --base08: #888888;
+  --base09: #777777;
+  --base10: #737373;
+  --base11: #676767;
+  --base12: #555555;
+  --base13: #404040;
+  --base14: #333333;
+  --base15: #222222;
+  --spec00: #fffec2;
+  --spec01: #ff0000;
+  --spec02: #990000;
+  --spec03: #000099;
+  --spec04: #3F81EE;
+  --spec05: #7c027c;
+  --spec06: #ecf1fa;
+  --spec07: #cd61a7;
+  --spec08: #7fb56d;
+  --spec09: #328509;
+  --white: #ffffff;
+  --inherit: inherit;
+  --transparent: transparent;
+  --focus: #3F81EE;
+  --focus-text: var(--white);
+  --component-name: #1171E8;
+  --component-brackets-selected: rgba(255, 255, 255, 0.4);
+  --component-attr: #DB00A9;
+  --component-highlighted-bg: #F2F2F3;
+  --pill-bg: rgba(0, 0, 0, 0.1);
+  --pill-bg-active: rgba(255, 255, 255, 0.3);
+  --warning-text: #735c0f;
+  --tracked-icon-bg: var(--spec03);
+}
+
+.theme--dark {
+  --base00: #242424;
+  --base01: #242424;
+  --base02: #121212;
+  --base03: #292929;
+  --base04: #2E2E2E;
+  --base05: #353535;
+  --base06: #4C4C4C;
+  --base07: #5C5C5C;
+  --base08: #777777;
+  --base09: #888888;
+  --base10: #8C8C8C;
+  --base11: #989898;
+  --base12: #AAAAAA;
+  --base13: #BFBFBF;
+  --base14: #CCCCCC;
+  --base15: #DDDDDD;
+  --spec00: #00013D;
+  --spec01: #00FFFF;
+  --spec02: #66FFFF;
+  --spec03: #FFFF66;
+  --spec04: #C07E11;
+  --spec05: #83FD83;
+  --spec06: #130E05;
+  --spec07: #cd61a7;
+  --spec08: #7fb56d;
+  --spec09: #328509;
+  --white: #ffffff;
+  --inherit: inherit;
+  --transparent: transparent;
+  --focus: #2270EC;
+  --focus-text: var(--white);
+  --component-name: #77BEFF;
+  --component-brackets-selected: rgba(255, 255, 255, 0.4);
+  --component-attr: #FE7AE9;
+  --component-highlighted-bg: #333333;
+  --pill-bg: rgba(255, 255, 255, 0.2);
+  --pill-bg-active: rgba(255, 255, 255, 0.3);
+  --warning-text: #8ca3f0;
+  --tracked-icon-bg: #5e5eb5;
+}
+
+.box-border {
+  box-sizing: border-box;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.relative {
+  position: relative;
+}
+
+.grid {
+  display: grid;
+}
+
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+.top-0 {
+  top: 0;
+}
+
+.right-0 {
+  right: 0;
+}
+
+.bottom-0 {
+  bottom: 0;
+}
+
+.left-0 {
+  left: 0;
+}
+
+.inset-0 {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.flex {
+  display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
+}
+
+.flex-auto {
+  flex: 1 1 auto;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-grow-0 {
+  flex-grow: 0;
+}
+
+.flex-shrink {
+  flex-shrink: 1;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.self-stretch {
+  align-self: stretch;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.w-7 {
+  width: var(--unit7);
+}
+
+.w-8 {
+  width: var(--unit8);
+}
+
+.w-9 {
+  width: var(--unit9);
+}
+
+.w-10 {
+  width: var(--unit10);
+}
+
+.w-11 {
+  width: var(--unit11);
+}
+
+.w-12 {
+  width: var(--unit12);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.w-auto {
+  width: auto;
+}
+
+.h-7 {
+  height: var(--unit7);
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-auto {
+  height: auto;
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.border-0 {
+  border-width: 0;
+}
+
+.w-0 {
+  width: var(--unit0);
+}
+
+.h-0 {
+  height: var(--unit0);
+}
+
+.p-0 {
+  padding: var(--unit0);
+}
+
+.pt-0 {
+  padding-top: var(--unit0);
+}
+
+.pr-0 {
+  padding-right: var(--unit0);
+}
+
+.pb-0 {
+  padding-bottom: var(--unit0);
+}
+
+.pl-0 {
+  padding-left: var(--unit0);
+}
+
+.px-0 {
+  padding-left: var(--unit0);
+  padding-right: var(--unit0);
+}
+
+.py-0 {
+  padding-bottom: var(--unit0);
+  padding-top: var(--unit0);
+}
+
+.m-0 {
+  margin: var(--unit0);
+}
+
+.mt-0 {
+  margin-top: var(--unit0);
+}
+
+.mr-0 {
+  margin-right: var(--unit0);
+}
+
+.mb-0 {
+  margin-bottom: var(--unit0);
+}
+
+.ml-0 {
+  margin-left: var(--unit0);
+}
+
+.mx-0 {
+  margin-left: var(--unit0);
+  margin-right: var(--unit0);
+}
+
+.my-0 {
+  margin-bottom: var(--unit0);
+  margin-top: var(--unit0);
+}
+
+.w-1 {
+  width: var(--unit1);
+}
+
+.h-1 {
+  height: var(--unit1);
+}
+
+.p-1 {
+  padding: var(--unit1);
+}
+
+.pt-1 {
+  padding-top: var(--unit1);
+}
+
+.pr-1 {
+  padding-right: var(--unit1);
+}
+
+.pb-1 {
+  padding-bottom: var(--unit1);
+}
+
+.pl-1 {
+  padding-left: var(--unit1);
+}
+
+.px-1 {
+  padding-left: var(--unit1);
+  padding-right: var(--unit1);
+}
+
+.py-1 {
+  padding-bottom: var(--unit1);
+  padding-top: var(--unit1);
+}
+
+.m-1 {
+  margin: var(--unit1);
+}
+
+.mt-1 {
+  margin-top: var(--unit1);
+}
+
+.mr-1 {
+  margin-right: var(--unit1);
+}
+
+.mb-1 {
+  margin-bottom: var(--unit1);
+}
+
+.ml-1 {
+  margin-left: var(--unit1);
+}
+
+.mx-1 {
+  margin-left: var(--unit1);
+  margin-right: var(--unit1);
+}
+
+.my-1 {
+  margin-bottom: var(--unit1);
+  margin-top: var(--unit1);
+}
+
+.w-2 {
+  width: var(--unit2);
+}
+
+.h-2 {
+  height: var(--unit2);
+}
+
+.p-2 {
+  padding: var(--unit2);
+}
+
+.pt-2 {
+  padding-top: var(--unit2);
+}
+
+.pr-2 {
+  padding-right: var(--unit2);
+}
+
+.pb-2 {
+  padding-bottom: var(--unit2);
+}
+
+.pl-2 {
+  padding-left: var(--unit2);
+}
+
+.px-2 {
+  padding-left: var(--unit2);
+  padding-right: var(--unit2);
+}
+
+.py-2 {
+  padding-bottom: var(--unit2);
+  padding-top: var(--unit2);
+}
+
+.m-2 {
+  margin: var(--unit2);
+}
+
+.mt-2 {
+  margin-top: var(--unit2);
+}
+
+.mr-2 {
+  margin-right: var(--unit2);
+}
+
+.mb-2 {
+  margin-bottom: var(--unit2);
+}
+
+.ml-2 {
+  margin-left: var(--unit2);
+}
+
+.mx-2 {
+  margin-left: var(--unit2);
+  margin-right: var(--unit2);
+}
+
+.my-2 {
+  margin-bottom: var(--unit2);
+  margin-top: var(--unit2);
+}
+
+.w-3 {
+  width: var(--unit3);
+}
+
+.h-3 {
+  height: var(--unit3);
+}
+
+.p-3 {
+  padding: var(--unit3);
+}
+
+.pt-3 {
+  padding-top: var(--unit3);
+}
+
+.pr-3 {
+  padding-right: var(--unit3);
+}
+
+.pb-3 {
+  padding-bottom: var(--unit3);
+}
+
+.pl-3 {
+  padding-left: var(--unit3);
+}
+
+.px-3 {
+  padding-left: var(--unit3);
+  padding-right: var(--unit3);
+}
+
+.py-3 {
+  padding-bottom: var(--unit3);
+  padding-top: var(--unit3);
+}
+
+.m-3 {
+  margin: var(--unit3);
+}
+
+.mt-3 {
+  margin-top: var(--unit3);
+}
+
+.mr-3 {
+  margin-right: var(--unit3);
+}
+
+.mb-3 {
+  margin-bottom: var(--unit3);
+}
+
+.ml-3 {
+  margin-left: var(--unit3);
+}
+
+.mx-3 {
+  margin-left: var(--unit3);
+  margin-right: var(--unit3);
+}
+
+.my-3 {
+  margin-bottom: var(--unit3);
+  margin-top: var(--unit3);
+}
+
+.w-4 {
+  width: var(--unit4);
+}
+
+.h-4 {
+  height: var(--unit4);
+}
+
+.p-4 {
+  padding: var(--unit4);
+}
+
+.pt-4 {
+  padding-top: var(--unit4);
+}
+
+.pr-4 {
+  padding-right: var(--unit4);
+}
+
+.pb-4 {
+  padding-bottom: var(--unit4);
+}
+
+.pl-4 {
+  padding-left: var(--unit4);
+}
+
+.px-4 {
+  padding-left: var(--unit4);
+  padding-right: var(--unit4);
+}
+
+.py-4 {
+  padding-bottom: var(--unit4);
+  padding-top: var(--unit4);
+}
+
+.m-4 {
+  margin: var(--unit4);
+}
+
+.mt-4 {
+  margin-top: var(--unit4);
+}
+
+.mr-4 {
+  margin-right: var(--unit4);
+}
+
+.mb-4 {
+  margin-bottom: var(--unit4);
+}
+
+.ml-4 {
+  margin-left: var(--unit4);
+}
+
+.mx-4 {
+  margin-left: var(--unit4);
+  margin-right: var(--unit4);
+}
+
+.my-4 {
+  margin-bottom: var(--unit4);
+  margin-top: var(--unit4);
+}
+
+.w-5 {
+  width: var(--unit5);
+}
+
+.h-5 {
+  height: var(--unit5);
+}
+
+.p-5 {
+  padding: var(--unit5);
+}
+
+.pt-5 {
+  padding-top: var(--unit5);
+}
+
+.pr-5 {
+  padding-right: var(--unit5);
+}
+
+.pb-5 {
+  padding-bottom: var(--unit5);
+}
+
+.pl-5 {
+  padding-left: var(--unit5);
+}
+
+.px-5 {
+  padding-left: var(--unit5);
+  padding-right: var(--unit5);
+}
+
+.py-5 {
+  padding-bottom: var(--unit5);
+  padding-top: var(--unit5);
+}
+
+.m-5 {
+  margin: var(--unit5);
+}
+
+.mt-5 {
+  margin-top: var(--unit5);
+}
+
+.mr-5 {
+  margin-right: var(--unit5);
+}
+
+.mb-5 {
+  margin-bottom: var(--unit5);
+}
+
+.ml-5 {
+  margin-left: var(--unit5);
+}
+
+.mx-5 {
+  margin-left: var(--unit5);
+  margin-right: var(--unit5);
+}
+
+.my-5 {
+  margin-bottom: var(--unit5);
+  margin-top: var(--unit5);
+}
+
+.w-6 {
+  width: var(--unit6);
+}
+
+.h-6 {
+  height: var(--unit6);
+}
+
+.p-6 {
+  padding: var(--unit6);
+}
+
+.pt-6 {
+  padding-top: var(--unit6);
+}
+
+.pr-6 {
+  padding-right: var(--unit6);
+}
+
+.pb-6 {
+  padding-bottom: var(--unit6);
+}
+
+.pl-6 {
+  padding-left: var(--unit6);
+}
+
+.px-6 {
+  padding-left: var(--unit6);
+  padding-right: var(--unit6);
+}
+
+.py-6 {
+  padding-bottom: var(--unit6);
+  padding-top: var(--unit6);
+}
+
+.m-6 {
+  margin: var(--unit6);
+}
+
+.mt-6 {
+  margin-top: var(--unit6);
+}
+
+.mr-6 {
+  margin-right: var(--unit6);
+}
+
+.mb-6 {
+  margin-bottom: var(--unit6);
+}
+
+.ml-6 {
+  margin-left: var(--unit6);
+}
+
+.mx-6 {
+  margin-left: var(--unit6);
+  margin-right: var(--unit6);
+}
+
+.my-6 {
+  margin-bottom: var(--unit6);
+  margin-top: var(--unit6);
+}
+
+.rounded-none {
+  border-radius: 0;
+}
+
+.rounded-sm {
+  border-radius: calc(var(--unit1) / 2);
+}
+
+.rounded {
+  border-radius: var(--unit1);
+}
+
+.rounded-lg {
+  border-radius: var(--unit2);
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.font-mono {
+  font-family: var(--font-monospace);
+}
+
+.leading-none {
+  line-height: 1;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.line-through {
+  text-decoration: line-through;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.whitespace-no-wrap {
+  white-space: nowrap;
+}
+
+.break-all {
+  word-break: break-all;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bg-transparent {
+  background-color: var(--transparent);
+}
+
+.fill-current {
+  fill: currentColor;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-col-resize {
+  cursor: col-resize;
+}
+
+.select-none {
+  user-select: none;
+}
+
+.z-0 {
+  z-index: 0;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.appearance-none {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.outline-none {
+  outline: 0;
+}
+
+.opacity-100 {
+  opacity: 1;
+}
+
+.opacity-75 {
+  opacity: 0.75;
+}
+
+.opacity-50 {
+  opacity: 0.5;
+}
+
+.opacity-25 {
+  opacity: 0.25;
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.list-none {
+  list-style-type: none;
+}
+
+/*
+  Utilities not part of Tailwind:
+*/
+.text-inherit {
+  color: var(--inherit);
+}
+
+.bg-base00 {
+  background-color: var(--base00);
+}
+
+.bg-base01 {
+  background-color: var(--base01);
+}
+
+.bg-base02 {
+  background-color: var(--base02);
+}
+
+.bg-base05 {
+  background-color: var(--base05);
+}
+
+.bg-spec00 {
+  background-color: var(--spec00);
+}
+
+.text-white {
+  color: var(--white);
+}
+
+.text-base09 {
+  color: var(--base09);
+}
+
+.text-base10 {
+  color: var(--base10);
+}
+
+.text-base11 {
+  color: var(--base11);
+}
+
+.text-base12 {
+  color: var(--base12);
+}
+
+.text-base13 {
+  color: var(--base13);
+}
+
+.text-base14 {
+  color: var(--base14);
+}
+
+.text-base15 {
+  color: var(--base15);
+}
+
+.text-spec01 {
+  color: var(--spec01);
+}
+
+.text-xs {
+  font-size: 1rem;
+}
+
+.text-sm {
+  font-size: 1.1rem;
+}
+
+.text-base {
+  font-size: 1.2rem;
+}
+
+.text-md {
+  font-size: 1.3rem;
+}
+
+.text-lg {
+  font-size: 1.4rem;
+}
+
+.text-xl {
+  font-size: 1.5rem;
+}
+
+.text-2xl {
+  font-size: 1.6rem;
+}
+
+.text-3xl {
+  font-size: 1.7rem;
+}
+
+.text-4xl {
+  font-size: 1.8rem;
+}
+
+.text-5xl {
+  font-size: 1.9rem;
+}
+
+.component-tree-item {
+  color: var(--base12);
+  font-size: 1.2rem;
+  min-height: 22px;
+  /**
+    * This element helps with a visual bug.
+    * When an item overflows the bounds of the list,
+    * the item background color clips at the point of the overflow.
+    * This child of the item has the same background color
+    * and will extend past the overflow point.
+  */
+}
+.component-tree-item__actions {
+  min-height: 22px;
+  opacity: 0;
+  right: var(--unit1);
+  /**
+    * __actions is position:sticky so it is always visible and on top.
+    * Due to margins and padding on various elements, it was
+    * difficult to keep the background of __actions on top
+    * of .tree-item text and align with the .tree-item background.
+    * This pseudo element is 100% of the width of __actions plus
+    * a little extra to guarantee alignment.
+  */
+  /**
+    * __actions is position:sticky so it is always visible and on top.
+    * :before is a gradient to soften the edge when overlaying text.
+  */
+}
+.component-tree-item__actions:after {
+  border-bottom-right-radius: var(--unit1);
+  border-top-right-radius: var(--unit1);
+  bottom: 0;
+  content: "";
+  left: calc(var(--unit1) * -1);
+  position: absolute;
+  right: calc(var(--unit1) * -1);
+  top: 0;
+}
+.component-tree-item__actions:before {
+  bottom: 0;
+  content: "";
+  left: calc(var(--unit3) * -1);
+  position: absolute;
+  top: 0;
+  width: var(--unit3);
+}
+.component-tree-item__action:focus {
+  outline: none;
+}
+.component-tree-item__action polygon,
+.component-tree-item__action rect,
+.component-tree-item__action path {
+  fill: var(--base15);
+}
+.component-tree-item .component-tree-item-background {
+  min-height: 22px;
+}
+.component-tree-item:hover {
+  background-color: var(--component-highlighted-bg);
+}
+.component-tree-item:hover .component-tree-item-background {
+  background-color: var(--component-highlighted-bg);
+}
+.component-tree-item:hover .component-tree-item__actions {
+  opacity: 1;
+}
+.component-tree-item:hover .component-tree-item__actions:after {
+  background-color: var(--component-highlighted-bg);
+}
+.component-tree-item:hover .component-tree-item__actions:before {
+  background: linear-gradient(to right, var(--transparent), var(--component-highlighted-bg) 75%);
+}
+
+.component-tree-item__tag .component-name {
+  color: var(--component-name);
+}
+.component-tree-item__tag .bracket-token {
+  color: var(--base09);
+}
+.component-tree-item__tag .key-token {
+  color: var(--component-attr);
+}
+.component-tree-item__tag .value-token {
+  color: var(--spec03);
+}
+.component-tree-item__tag .arg-value-token {
+  background: none;
+  border: none;
+  padding: 0 2px;
+}
+.component-tree-item__tag .arg-value-token:hover {
+  background-color: var(--spec03);
+  color: var(--base00);
+  cursor: pointer;
+}
+
+/**
+ * Modifier
+ * highlighted - the component currently being previewed
+ */
+.component-tree-item.component-tree-item--highlighted {
+  background-color: var(--component-highlighted-bg);
+  border-radius: 0;
+}
+
+.component-tree-item--pinned .component-tree-item__tag .component-name,
+.component-tree-item--pinned .component-tree-item__tag .bracket-token,
+.component-tree-item--pinned .component-tree-item__tag .key-token,
+.component-tree-item--pinned .component-tree-item__tag .value-token {
+  color: var(--focus-text);
+}
+
+.component-tree-item__bracket:before,
+.component-tree-item__bracket:after,
+.component-tree-item-classic__bracket:before,
+.component-tree-item-classic__bracket:after {
+  color: var(--base09);
+}
+
+.component-tree-item__bracket:before {
+  content: "<";
+}
+
+.component-tree-item__bracket:after {
+  content: ">";
+}
+
+.component-tree-item__bracket.component-tree-item__bracket--self-closing:after {
+  content: "/>";
+}
+
+.component-tree-item-classic__bracket:before {
+  content: "{{";
+}
+
+.component-tree-item-classic__bracket:after {
+  content: "}}";
+}
+
+/**
+ * Modifier
+ * selected - user clicked on component
+ */
+.component-tree-item.component-tree-item--pinned {
+  background: var(--focus);
+  color: var(--focus-text);
+}
+.component-tree-item.component-tree-item--pinned:hover {
+  background: var(--focus);
+}
+.component-tree-item.component-tree-item--pinned .component-tree-item-background {
+  background: var(--focus);
+}
+.component-tree-item.component-tree-item--pinned .component-tree-item__actions {
+  opacity: 1;
+}
+.component-tree-item.component-tree-item--pinned .component-tree-item__actions:after {
+  background: var(--focus);
+}
+.component-tree-item.component-tree-item--pinned .component-tree-item__actions:before {
+  background: linear-gradient(to right, var(--transparent), var(--focus) 75%);
+}
+.component-tree-item.component-tree-item--pinned .component-tree-item__bracket:before,
+.component-tree-item.component-tree-item--pinned .component-tree-item__bracket:after {
+  color: var(--component-backets-selected);
+}
+.component-tree-item.component-tree-item--pinned .component-tree-item__expand,
+.component-tree-item.component-tree-item--pinned .component-tree-item__action {
+  opacity: 1;
+}
+.component-tree-item.component-tree-item--pinned .component-tree-item__expand polygon,
+.component-tree-item.component-tree-item--pinned .component-tree-item__expand rect,
+.component-tree-item.component-tree-item--pinned .component-tree-item__expand path,
+.component-tree-item.component-tree-item--pinned .component-tree-item__action polygon,
+.component-tree-item.component-tree-item--pinned .component-tree-item__action rect,
+.component-tree-item.component-tree-item--pinned .component-tree-item__action path {
+  fill: var(--focus-text);
+}
+
+.component-tree-item--component {
+  color: var(--base09);
+}
+
+.deprecation-item {
+  border-bottom: 1px solid var(--base01);
+}
+.deprecation-item .send-to-console {
+  font-size: inherit;
+}
+.deprecation-item .external-link path {
+  fill: var(--base14);
+}
+
+.deprecation-source {
+  padding-left: 70px;
+}
+
+.dropdown__arrow {
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dropdown__collapsed-icon {
+  left: 12px;
+  top: 7px;
+}
+
+/**
+ MIXIN
+ =====
+ A single mixin inside the object inspector
+ It could be the object's own properties
+ or a mixin the object extends
+*/
+.mixin__name {
+  border-bottom: 1px solid var(--base03);
+  padding: 4px 2px 4px 22px;
+  z-index: 1;
+}
+.mixin__name:active {
+  background-color: var(--base02);
+}
+.mixin__name:before {
+  color: var(--base10);
+  content: "▶";
+  font-size: 75%;
+  left: 7px;
+  margin-right: 5px;
+  position: absolute;
+  top: 6px;
+  transform: rotate(0deg);
+  transition: all 0.1s;
+}
+
+.mixin_props_no .mixin__name:before {
+  opacity: 0;
+}
+
+.mixin_state_expanded .mixin__name:before {
+  transform: rotate(90deg);
+}
+
+.mixin__properties {
+  border-bottom: 1px solid var(--base03);
+  padding: 3px 0 5px;
+}
+
+.mixin__property {
+  min-height: 19px;
+  padding-bottom: 1px;
+  padding-top: 1px;
+}
+.mixin__property button {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+.mixin__property .pad {
+  flex-shrink: 0;
+  width: 22px;
+}
+.mixin__property .mixin__calc-btn svg path,
+.mixin__property .mixin__calc-btn svg circle {
+  fill: var(--spec07);
+}
+.mixin__property .mixin__send-btn {
+  opacity: 0;
+  padding-right: 6px;
+}
+.mixin__property .mixin__cp-toggle {
+  outline: none;
+  width: 22px;
+}
+.mixin__property .mixin__cp-toggle svg {
+  transform: rotate(-90deg) translateY(1px);
+  transition: all 0.2s;
+}
+.mixin__property .mixin__cp-toggle--expanded svg {
+  transform: rotate(0deg);
+}
+
+/* Buttons */
+.mixin__property-overridden-by {
+  display: none;
+}
+
+.mixin__property-name {
+  max-width: 50%;
+}
+
+.mixin__property-value {
+  flex: 1;
+  min-height: 14px;
+}
+
+.mixin__property-value-txt {
+  border: 1px solid var(--base09);
+}
+
+.mixin__property .type-function {
+  color: var(--base08);
+}
+
+.mixin__property .type-object {
+  color: var(--base11);
+}
+
+.mixin__property .type-ember-object,
+.mixin__property .type-object,
+.mixin__property .type-array {
+  cursor: pointer;
+}
+
+.mixin__property .type-null,
+.mixin__property .type-boolean {
+  color: var(--spec03);
+}
+
+.mixin__property .type-descriptor {
+  color: var(--spec02);
+  cursor: pointer;
+}
+
+.mixin__property .type-service {
+  color: var(--spec09);
+}
+
+.mixin__property:not(.mixin__property-state-overridden):hover {
+  background-color: var(--base01);
+}
+
+.mixin__property-state-overridden:hover .mixin__property-overridden-by {
+  display: inline;
+}
+
+.mixin__property:not(.mixin__property-state-overridden):hover .mixin__send-btn {
+  opacity: 1;
+}
+.mixin__property:not(.mixin__property-state-overridden):hover .mixin__send-btn:active {
+  opacity: 0.5;
+}
+
+.object-trail {
+  margin-left: 34px;
+}
+
+.object-inspector-toolbar.toolbar {
+  border-bottom: 1px solid var(--base03);
+  min-height: 30px;
+}
+.object-inspector-toolbar.toolbar .toolbar__radio--first {
+  margin-left: 7px;
+}
+
+.mixin__property-dependency-list {
+  margin-bottom: 5px;
+  margin-top: 2px;
+  padding-top: 2px;
+}
+.mixin__property-dependency-list > svg {
+  height: 10px;
+  left: 28px;
+  position: absolute;
+  top: -4px;
+  width: 19px;
+}
+
+.mixin__property-dependency-item {
+  margin-bottom: 2px;
+  margin-left: 55px;
+}
+.mixin__property-dependency-item:before {
+  background-color: var(--base08);
+  content: "";
+  height: 8px;
+  left: -9px;
+  position: absolute;
+  top: -5px;
+  width: 1px;
+}
+.mixin__property-dependency-item svg {
+  bottom: 2px;
+  left: -13px;
+  position: absolute;
+}
+.mixin__property-dependency-item svg ellipse {
+  fill: var(--base00);
+  stroke: var(--base08);
+}
+
+.mixin__property-dependency-item:first-child:before {
+  display: none;
+}
+
+.mixin__property-icon-container {
+  width: 22px;
+}
+
+.mixin__property-icon {
+  height: 17px;
+  line-height: 17px;
+  width: 17px;
+}
+
+.mixin__property-icon--service {
+  background-color: var(--spec08);
+}
+.mixin__property-icon--service:before {
+  content: "S";
+}
+
+.mixin__property-icon--computed {
+  background-color: var(--spec07);
+}
+.mixin__property-icon--computed:before {
+  content: "C";
+}
+
+.mixin__property-icon--property {
+  background-color: var(--base06);
+}
+.mixin__property-icon--property:before {
+  content: "P";
+}
+
+.mixin__property-icon--getter {
+  background-color: var(--spec07);
+}
+.mixin__property-icon--getter:before {
+  content: "G";
+}
+
+.mixin__property-icon--function {
+  background-color: var(--base08);
+}
+.mixin__property-icon--function:before {
+  content: "ƒ";
+}
+
+.mixin__property-icon--tracked {
+  background-color: var(--tracked-icon-bg);
+}
+.mixin__property-icon--tracked:before {
+  content: "T";
+}
+
+.route-cell-objects .is-link {
+  margin-right: 2px;
+}
+.route-cell-objects .send-to-console {
+  margin-right: 10px;
+}
+
+.whats-new {
+  padding: 30px 40px;
+}
+.whats-new h1 {
+  font-size: 3.4rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.whats-new h2 {
+  border-bottom: 1px solid var(--base02);
+  font-size: 2.1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+.whats-new ul {
+  list-style-type: circle;
+  padding: 0;
+}
+.whats-new li,
+.whats-new p {
+  font-size: 1.4rem;
+  line-height: 120%;
+  margin-bottom: 0.5rem;
+}
+.whats-new a {
+  color: var(--spec04);
+}
+
+.ember-table {
+  background: var(--base00);
+}
+.ember-table table {
+  min-width: 100%;
+}
+.ember-table th,
+.ember-table td {
+  border-right: 1px solid var(--base04);
+}
+.ember-table th {
+  background: var(--base00);
+  border-bottom: 1px solid var(--base05);
+  box-sizing: border-box;
+  color: var(--inherit);
+  font-weight: normal;
+  line-height: 30px;
+  min-height: 30px;
+  opacity: 1;
+  overflow: hidden;
+  padding: 3px 6px;
+  position: relative;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ember-table td {
+  background: var(--base02);
+}
+.ember-table td,
+.ember-table .et-cell-content {
+  box-sizing: border-box;
+  line-height: 30px;
+  min-height: 30px;
+  overflow: hidden;
+  padding: 3px 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ember-table .striped td {
+  background-color: var(--base00);
+}
+.ember-table .blue {
+  color: #174fff;
+}
+.ember-table .green {
+  color: #009900;
+}
+.ember-table .red {
+  color: #ff2717;
+}
+.ember-table th.is-sortable:hover {
+  background: var(--base04);
+}
+.ember-table .et-sort-indicator:before {
+  content: "▾";
+  display: inline-block;
+  font-size: 1.4rem;
+  line-height: 1;
+  transform: rotate(0);
+}
+.ember-table .et-sort-indicator.is-ascending:before {
+  transform: rotate(180deg);
+}
+.ember-table .et-header-resize-area {
+  cursor: col-resize;
+  width: 12px;
+}
+.ember-table.is-resizing * {
+  cursor: col-resize !important;
+  user-select: none;
+}
+.ember-table th.is-reorderable {
+  cursor: grab;
+}
+.ember-table .et-reorder-drop-indicator,
+.ember-table .et-reorder-main-indicator {
+  background: 0 0;
+  border-left: none;
+  opacity: 0.8;
+  position: absolute;
+  z-index: 10;
+}
+.ember-table .et-reorder-main-indicator {
+  border-right: none;
+}
+.ember-table .et-reorder-main-indicator th {
+  background: #e9f4fc;
+}
+.ember-table .et-reorder-drop-indicator {
+  border-right: #27618a solid 1px;
+  height: 100%;
+}
+.ember-table.is-reordering * {
+  cursor: grabbing !important;
+  user-select: none;
+}
+.ember-table td.is-first-column {
+  padding: 0;
+}
+.ember-table .is-link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.ember-table .et-cell-container {
+  display: flex;
+}
+.ember-table .et-toggle-collapse,
+.ember-table .et-toggle-select {
+  align-items: center;
+  display: flex;
+}
+.ember-table .et-toggle-select {
+  padding: 4px;
+}
+.ember-table .et-toggle-collapse {
+  box-sizing: content-box;
+  padding: 0;
+  width: 24px;
+}
+.ember-table .et-depth-placeholder:not(.depth-0) {
+  box-sizing: content-box;
+  height: 100%;
+  width: 24px;
+}
+.ember-table .et-depth-indent.depth-1 {
+  padding-left: 16px;
+}
+.ember-table .et-cell-content {
+  flex: 1;
+}
+.ember-table tr.is-selectable {
+  cursor: pointer;
+}
+.ember-table tr.is-selected td {
+  background: var(--focus);
+  color: var(--focus-text);
+}
+.ember-table tr.is-selectable:hover td {
+  background: var(--base04);
+}
+.ember-table tr.is-selected.is-selectable:hover td {
+  background: var(--focus);
+  color: var(--focus-text);
+}
