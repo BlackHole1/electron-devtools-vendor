@@ -6,3 +6,4 @@ export declare const REDUX_DEVTOOLS = string;
 export declare const APOLLO_DEVELOPER_TOOLS = string;
 export declare const MOBX_DEVTOOLS = string;
 export declare const CYCLEJS_DEVTOOL = string;
+export declare const ANGULARJS_BATARANG = string;
