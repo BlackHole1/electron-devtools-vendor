@@ -1,14 +1,24 @@
 # electron-devtools-vendor
 
+## Install
+
+```shell
+$ yarn add electron-devtools-vendor -D
+// or
+$ npm install electron-devtools-vendor -D
+```
+
 ## Usage
 
 ```typescript
-import { REACT_DEVTOOLS } from "electron-devtools-vendor";
-import { session } from "electron";
+const { session } = require("electron");
 
-session.loadExtension(REACT_DEVTOOLS, {
-    allowFileAccess: true,
-});
+if (process.env.NODE_ENV === "development") {
+    const { REACT_DEVTOOLS } = require("electron-devtools-vendor");
+    session.loadExtension(REACT_DEVTOOLS, {
+        allowFileAccess: true,
+    });
+}
 ```
 
 ## Extension List
