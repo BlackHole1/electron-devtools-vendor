@@ -9,3 +9,4 @@ module.exports.VUEJS3_DEVTOOLS = extensionPath("vuejs3-devtools");
 module.exports.REDUX_DEVTOOLS = extensionPath("redux-devtools");
 module.exports.APOLLO_DEVELOPER_TOOLS = extensionPath("apollo-developer-tools");
 module.exports.MOBX_DEVTOOLS = extensionPath("mobx-devtools");
+module.exports.CYCLEJS_DEVTOOL = extensionPath("cyclejs-devtool");
