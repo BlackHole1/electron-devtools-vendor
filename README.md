@@ -44,8 +44,8 @@ $ npm install electron-devtools-vendor -D
 const { session } = require("electron");
 
 if (process.env.NODE_ENV === "development") {
-    const { REACT_DEVTOOLS } = require("electron-devtools-vendor");
-    session.loadExtension(REACT_DEVTOOLS, {
+    const { REACT_DEVELOPER_TOOLS } = require("electron-devtools-vendor");
+    session.loadExtension(REACT_DEVELOPER_TOOLS, {
         allowFileAccess: true,
     });
 }
