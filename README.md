@@ -45,7 +45,7 @@ const { session } = require("electron");
 
 if (process.env.NODE_ENV === "development") {
     const { REACT_DEVELOPER_TOOLS } = require("electron-devtools-vendor");
-    session.loadExtension(REACT_DEVELOPER_TOOLS, {
+    session.defaultSession.loadExtension(REACT_DEVELOPER_TOOLS, {
         allowFileAccess: true,
     });
 }
