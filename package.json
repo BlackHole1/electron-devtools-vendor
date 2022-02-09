@@ -22,5 +22,22 @@
     "extensions",
     "index.js",
     "index.d.ts"
+  ],
+  "keywords": [
+    "electron",
+    "electron-devtools",
+    "devtools",
+    "electron-devtools-vendor",
+    "react-developer-tools",
+    "ember-inspector",
+    "vuejs-devtools",
+    "vuejs3-devtools",
+    "redux-devtools",
+    "apollo-developer-tools",
+    "mobx-devtools",
+    "cyclejs-devtool",
+    "angularjs-batarang",
+    "jquery-debugger",
+    "backbone-debugger"
   ]
 }
