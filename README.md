@@ -2,7 +2,9 @@
     <h2>electron-devtools-vendor</h2>
     <img alt="MIT" src="https://img.shields.io/github/license/BlackHole1/electron-devtools-vendor?color=9cf&style=flat-square">
     <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/BlackHole1/electron-devtools-vendor?color=9cf&style=flat-square">
-    <img alt="Npm version" src="https://img.shields.io/npm/v/electron-devtools-vendor?color=9cf&style=flat-square">
+    <a href="https://www.npmjs.com/package/electron-devtools-vendor">
+        <img alt="Npm version" src="https://img.shields.io/npm/v/electron-devtools-vendor?color=9cf&style=flat-square">
+    </a>
 </div>
 
 ### Feature
@@ -36,6 +38,8 @@ because the plugin source code is in `node_modules`, it will have a greater succ
 $ yarn add electron-devtools-vendor -D
 // or
 $ npm install electron-devtools-vendor -D
+// or
+$ pnpm add electron-devtools-vendor -D
 ```
 
 ### Usage
