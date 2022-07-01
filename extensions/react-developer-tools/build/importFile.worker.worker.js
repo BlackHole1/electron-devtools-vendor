@@ -3332,10 +3332,10 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "importFile", function() { return /* binding */ importFile_worker_importFile; });
 
-// EXTERNAL MODULE: ../react-devtools-scheduling-profiler/node_modules/regenerator-runtime/runtime.js
+// EXTERNAL MODULE: ../react-devtools-timeline/node_modules/regenerator-runtime/runtime.js
 var runtime = __webpack_require__(5);
 
-// EXTERNAL MODULE: /Users/jstejada/code/jstejada-react/node_modules/@elg/speedscope/dist/library/library.js
+// EXTERNAL MODULE: /Users/luna/code/react/node_modules/@elg/speedscope/dist/library/library.js
 var library = __webpack_require__(1);
 
 // CONCATENATED MODULE: ../react-devtools-shared/src/constants.js
@@ -3360,9 +3360,13 @@ const TREE_OPERATION_REORDER_CHILDREN = 3;
 const TREE_OPERATION_UPDATE_TREE_BASE_DURATION = 4;
 const TREE_OPERATION_UPDATE_ERRORS_OR_WARNINGS = 5;
 const TREE_OPERATION_REMOVE_ROOT = 6;
+const TREE_OPERATION_SET_SUBTREE_MODE = 7;
+const PROFILING_FLAG_BASIC_SUPPORT = 0b01;
+const PROFILING_FLAG_TIMELINE_SUPPORT = 0b10;
 const LOCAL_STORAGE_DEFAULT_TAB_KEY = 'React::DevTools::defaultTab';
 const LOCAL_STORAGE_FILTER_PREFERENCES_KEY = 'React::DevTools::componentFilters';
 const SESSION_STORAGE_LAST_SELECTION_KEY = 'React::DevTools::lastSelection';
+const LOCAL_STORAGE_OPEN_IN_EDITOR_URL = 'React::DevTools::openInEditorUrl';
 const LOCAL_STORAGE_PARSE_HOOK_NAMES_KEY = 'React::DevTools::parseHookNames';
 const SESSION_STORAGE_RECORD_CHANGE_DESCRIPTIONS_KEY = 'React::DevTools::recordChangeDescriptions';
 const SESSION_STORAGE_RELOAD_AND_PROFILE_KEY = 'React::DevTools::reloadAndProfile';
@@ -3454,46 +3458,46 @@ const THEME_STYLES = {
     '--color-resize-bar-active': '#dcdcdc',
     '--color-resize-bar-border': '#d1d1d1',
     '--color-resize-bar-dot': '#333333',
-    '--color-scheduling-profiler-internal-module': '#d1d1d1',
-    '--color-scheduling-profiler-internal-module-hover': '#c9c9c9',
-    '--color-scheduling-profiler-internal-module-text': '#444',
-    '--color-scheduling-profiler-native-event': '#ccc',
-    '--color-scheduling-profiler-native-event-hover': '#aaa',
-    '--color-scheduling-profiler-network-primary': '#fcf3dc',
-    '--color-scheduling-profiler-network-primary-hover': '#f0e7d1',
-    '--color-scheduling-profiler-network-secondary': '#efc457',
-    '--color-scheduling-profiler-network-secondary-hover': '#e3ba52',
-    '--color-scheduling-profiler-priority-background': '#f6f6f6',
-    '--color-scheduling-profiler-priority-border': '#eeeeee',
-    '--color-scheduling-profiler-user-timing': '#c9cacd',
-    '--color-scheduling-profiler-user-timing-hover': '#93959a',
-    '--color-scheduling-profiler-react-idle': '#d3e5f6',
-    '--color-scheduling-profiler-react-idle-hover': '#c3d9ef',
-    '--color-scheduling-profiler-react-render': '#9fc3f3',
-    '--color-scheduling-profiler-react-render-hover': '#83afe9',
-    '--color-scheduling-profiler-react-render-text': '#11365e',
-    '--color-scheduling-profiler-react-commit': '#c88ff0',
-    '--color-scheduling-profiler-react-commit-hover': '#b281d6',
-    '--color-scheduling-profiler-react-commit-text': '#3e2c4a',
-    '--color-scheduling-profiler-react-layout-effects': '#b281d6',
-    '--color-scheduling-profiler-react-layout-effects-hover': '#9d71bd',
-    '--color-scheduling-profiler-react-layout-effects-text': '#3e2c4a',
-    '--color-scheduling-profiler-react-passive-effects': '#b281d6',
-    '--color-scheduling-profiler-react-passive-effects-hover': '#9d71bd',
-    '--color-scheduling-profiler-react-passive-effects-text': '#3e2c4a',
-    '--color-scheduling-profiler-react-schedule': '#9fc3f3',
-    '--color-scheduling-profiler-react-schedule-hover': '#2683E2',
-    '--color-scheduling-profiler-react-suspense-rejected': '#f1cc14',
-    '--color-scheduling-profiler-react-suspense-rejected-hover': '#ffdf37',
-    '--color-scheduling-profiler-react-suspense-resolved': '#a6e59f',
-    '--color-scheduling-profiler-react-suspense-resolved-hover': '#89d281',
-    '--color-scheduling-profiler-react-suspense-unresolved': '#c9cacd',
-    '--color-scheduling-profiler-react-suspense-unresolved-hover': '#93959a',
-    '--color-scheduling-profiler-thrown-error': '#ee1638',
-    '--color-scheduling-profiler-thrown-error-hover': '#da1030',
-    '--color-scheduling-profiler-text-color': '#000000',
-    '--color-scheduling-profiler-text-dim-color': '#ccc',
-    '--color-scheduling-profiler-react-work-border': '#eeeeee',
+    '--color-timeline-internal-module': '#d1d1d1',
+    '--color-timeline-internal-module-hover': '#c9c9c9',
+    '--color-timeline-internal-module-text': '#444',
+    '--color-timeline-native-event': '#ccc',
+    '--color-timeline-native-event-hover': '#aaa',
+    '--color-timeline-network-primary': '#fcf3dc',
+    '--color-timeline-network-primary-hover': '#f0e7d1',
+    '--color-timeline-network-secondary': '#efc457',
+    '--color-timeline-network-secondary-hover': '#e3ba52',
+    '--color-timeline-priority-background': '#f6f6f6',
+    '--color-timeline-priority-border': '#eeeeee',
+    '--color-timeline-user-timing': '#c9cacd',
+    '--color-timeline-user-timing-hover': '#93959a',
+    '--color-timeline-react-idle': '#d3e5f6',
+    '--color-timeline-react-idle-hover': '#c3d9ef',
+    '--color-timeline-react-render': '#9fc3f3',
+    '--color-timeline-react-render-hover': '#83afe9',
+    '--color-timeline-react-render-text': '#11365e',
+    '--color-timeline-react-commit': '#c88ff0',
+    '--color-timeline-react-commit-hover': '#b281d6',
+    '--color-timeline-react-commit-text': '#3e2c4a',
+    '--color-timeline-react-layout-effects': '#b281d6',
+    '--color-timeline-react-layout-effects-hover': '#9d71bd',
+    '--color-timeline-react-layout-effects-text': '#3e2c4a',
+    '--color-timeline-react-passive-effects': '#b281d6',
+    '--color-timeline-react-passive-effects-hover': '#9d71bd',
+    '--color-timeline-react-passive-effects-text': '#3e2c4a',
+    '--color-timeline-react-schedule': '#9fc3f3',
+    '--color-timeline-react-schedule-hover': '#2683E2',
+    '--color-timeline-react-suspense-rejected': '#f1cc14',
+    '--color-timeline-react-suspense-rejected-hover': '#ffdf37',
+    '--color-timeline-react-suspense-resolved': '#a6e59f',
+    '--color-timeline-react-suspense-resolved-hover': '#89d281',
+    '--color-timeline-react-suspense-unresolved': '#c9cacd',
+    '--color-timeline-react-suspense-unresolved-hover': '#93959a',
+    '--color-timeline-thrown-error': '#ee1638',
+    '--color-timeline-thrown-error-hover': '#da1030',
+    '--color-timeline-text-color': '#000000',
+    '--color-timeline-text-dim-color': '#ccc',
+    '--color-timeline-react-work-border': '#eeeeee',
     '--color-search-match': 'yellow',
     '--color-search-match-current': '#f7923b',
     '--color-selected-tree-highlight-active': 'rgba(0, 136, 250, 0.1)',
@@ -3597,46 +3601,46 @@ const THEME_STYLES = {
     '--color-resize-bar-active': '#31363f',
     '--color-resize-bar-border': '#3d424a',
     '--color-resize-bar-dot': '#cfd1d5',
-    '--color-scheduling-profiler-internal-module': '#303542',
-    '--color-scheduling-profiler-internal-module-hover': '#363b4a',
-    '--color-scheduling-profiler-internal-module-text': '#7f8899',
-    '--color-scheduling-profiler-native-event': '#b2b2b2',
-    '--color-scheduling-profiler-native-event-hover': '#949494',
-    '--color-scheduling-profiler-network-primary': '#fcf3dc',
-    '--color-scheduling-profiler-network-primary-hover': '#e3dbc5',
-    '--color-scheduling-profiler-network-secondary': '#efc457',
-    '--color-scheduling-profiler-network-secondary-hover': '#d6af4d',
-    '--color-scheduling-profiler-priority-background': '#1d2129',
-    '--color-scheduling-profiler-priority-border': '#282c34',
-    '--color-scheduling-profiler-user-timing': '#c9cacd',
-    '--color-scheduling-profiler-user-timing-hover': '#93959a',
-    '--color-scheduling-profiler-react-idle': '#3d485b',
-    '--color-scheduling-profiler-react-idle-hover': '#465269',
-    '--color-scheduling-profiler-react-render': '#2683E2',
-    '--color-scheduling-profiler-react-render-hover': '#1a76d4',
-    '--color-scheduling-profiler-react-render-text': '#11365e',
-    '--color-scheduling-profiler-react-commit': '#731fad',
-    '--color-scheduling-profiler-react-commit-hover': '#611b94',
-    '--color-scheduling-profiler-react-commit-text': '#e5c1ff',
-    '--color-scheduling-profiler-react-layout-effects': '#611b94',
-    '--color-scheduling-profiler-react-layout-effects-hover': '#51167a',
-    '--color-scheduling-profiler-react-layout-effects-text': '#e5c1ff',
-    '--color-scheduling-profiler-react-passive-effects': '#611b94',
-    '--color-scheduling-profiler-react-passive-effects-hover': '#51167a',
-    '--color-scheduling-profiler-react-passive-effects-text': '#e5c1ff',
-    '--color-scheduling-profiler-react-schedule': '#2683E2',
-    '--color-scheduling-profiler-react-schedule-hover': '#1a76d4',
-    '--color-scheduling-profiler-react-suspense-rejected': '#f1cc14',
-    '--color-scheduling-profiler-react-suspense-rejected-hover': '#e4c00f',
-    '--color-scheduling-profiler-react-suspense-resolved': '#a6e59f',
-    '--color-scheduling-profiler-react-suspense-resolved-hover': '#89d281',
-    '--color-scheduling-profiler-react-suspense-unresolved': '#c9cacd',
-    '--color-scheduling-profiler-react-suspense-unresolved-hover': '#93959a',
-    '--color-scheduling-profiler-thrown-error': '#fb3655',
-    '--color-scheduling-profiler-thrown-error-hover': '#f82042',
-    '--color-scheduling-profiler-text-color': '#282c34',
-    '--color-scheduling-profiler-text-dim-color': '#555b66',
-    '--color-scheduling-profiler-react-work-border': '#3d424a',
+    '--color-timeline-internal-module': '#303542',
+    '--color-timeline-internal-module-hover': '#363b4a',
+    '--color-timeline-internal-module-text': '#7f8899',
+    '--color-timeline-native-event': '#b2b2b2',
+    '--color-timeline-native-event-hover': '#949494',
+    '--color-timeline-network-primary': '#fcf3dc',
+    '--color-timeline-network-primary-hover': '#e3dbc5',
+    '--color-timeline-network-secondary': '#efc457',
+    '--color-timeline-network-secondary-hover': '#d6af4d',
+    '--color-timeline-priority-background': '#1d2129',
+    '--color-timeline-priority-border': '#282c34',
+    '--color-timeline-user-timing': '#c9cacd',
+    '--color-timeline-user-timing-hover': '#93959a',
+    '--color-timeline-react-idle': '#3d485b',
+    '--color-timeline-react-idle-hover': '#465269',
+    '--color-timeline-react-render': '#2683E2',
+    '--color-timeline-react-render-hover': '#1a76d4',
+    '--color-timeline-react-render-text': '#11365e',
+    '--color-timeline-react-commit': '#731fad',
+    '--color-timeline-react-commit-hover': '#611b94',
+    '--color-timeline-react-commit-text': '#e5c1ff',
+    '--color-timeline-react-layout-effects': '#611b94',
+    '--color-timeline-react-layout-effects-hover': '#51167a',
+    '--color-timeline-react-layout-effects-text': '#e5c1ff',
+    '--color-timeline-react-passive-effects': '#611b94',
+    '--color-timeline-react-passive-effects-hover': '#51167a',
+    '--color-timeline-react-passive-effects-text': '#e5c1ff',
+    '--color-timeline-react-schedule': '#2683E2',
+    '--color-timeline-react-schedule-hover': '#1a76d4',
+    '--color-timeline-react-suspense-rejected': '#f1cc14',
+    '--color-timeline-react-suspense-rejected-hover': '#e4c00f',
+    '--color-timeline-react-suspense-resolved': '#a6e59f',
+    '--color-timeline-react-suspense-resolved-hover': '#89d281',
+    '--color-timeline-react-suspense-unresolved': '#c9cacd',
+    '--color-timeline-react-suspense-unresolved-hover': '#93959a',
+    '--color-timeline-thrown-error': '#fb3655',
+    '--color-timeline-thrown-error-hover': '#f82042',
+    '--color-timeline-text-color': '#282c34',
+    '--color-timeline-text-dim-color': '#555b66',
+    '--color-timeline-react-work-border': '#3d424a',
     '--color-search-match': 'yellow',
     '--color-search-match-current': '#f7923b',
     '--color-selected-tree-highlight-active': 'rgba(23, 143, 185, 0.15)',
@@ -3689,7 +3693,7 @@ const THEME_STYLES = {
 const COMFORTABLE_LINE_HEIGHT = parseInt(THEME_STYLES.comfortable['--line-height-data'], 10);
 const COMPACT_LINE_HEIGHT = parseInt(THEME_STYLES.compact['--line-height-data'], 10);
 
-// CONCATENATED MODULE: ../react-devtools-scheduling-profiler/src/constants.js
+// CONCATENATED MODULE: ../react-devtools-timeline/src/constants.js
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -3702,7 +3706,8 @@ const COMPACT_LINE_HEIGHT = parseInt(THEME_STYLES.compact['--line-height-data'],
 const REACT_TOTAL_NUM_LANES = 31; // Increment this number any time a backwards breaking change is made to the profiler metadata.
 
 const SCHEDULING_PROFILER_VERSION = 1;
-// CONCATENATED MODULE: ../react-devtools-scheduling-profiler/src/import-worker/InvalidProfileError.js
+const SNAPSHOT_MAX_HEIGHT = 60;
+// CONCATENATED MODULE: ../react-devtools-timeline/src/import-worker/InvalidProfileError.js
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -3716,7 +3721,7 @@ const SCHEDULING_PROFILER_VERSION = 1;
  * An error thrown when an invalid profile could not be processed.
  */
 class InvalidProfileError extends Error {}
-// CONCATENATED MODULE: ../react-devtools-scheduling-profiler/node_modules/memoize-one/dist/memoize-one.esm.js
+// CONCATENATED MODULE: ../react-devtools-timeline/node_modules/memoize-one/dist/memoize-one.esm.js
 function areInputsEqual(newInputs, lastInputs) {
   if (newInputs.length !== lastInputs.length) {
     return false;
@@ -3763,7 +3768,7 @@ function memoizeOne(resultFn, isEqual) {
 }
 
 /* harmony default export */ var memoize_one_esm = (memoizeOne);
-// CONCATENATED MODULE: ../react-devtools-scheduling-profiler/src/utils/getBatchRange.js
+// CONCATENATED MODULE: ../react-devtools-timeline/src/utils/getBatchRange.js
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -3803,11 +3808,11 @@ function unmemoizedGetBatchRange(batchUID, data, minStartTime = 0) {
 }
 
 const getBatchRange = memoize_one_esm(unmemoizedGetBatchRange);
-// EXTERNAL MODULE: /Users/jstejada/code/jstejada-react/node_modules/error-stack-parser/error-stack-parser.js
+// EXTERNAL MODULE: /Users/luna/code/react/node_modules/error-stack-parser/error-stack-parser.js
 var error_stack_parser = __webpack_require__(3);
 var error_stack_parser_default = /*#__PURE__*/__webpack_require__.n(error_stack_parser);
 
-// CONCATENATED MODULE: ../react-devtools-scheduling-profiler/src/import-worker/preprocessData.js
+// CONCATENATED MODULE: ../react-devtools-timeline/src/import-worker/preprocessData.js
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -4230,195 +4235,163 @@ state) {
           timestamp: startTime,
           type: 'thrown-error'
         });
-      } // eslint-disable-line brace-style
-      // React Events - suspense
-      else if (name.startsWith('--suspense-suspend-')) {
-          const [id, componentName, phase, laneBitmaskString, promiseName] = name.substr(19).split('-');
-          const lanes = getLanesFromTransportDecimalBitmask(laneBitmaskString);
-          const availableDepths = new Array(state.unresolvedSuspenseEvents.size + 1).fill(true);
-          state.unresolvedSuspenseEvents.forEach(({
-            depth
-          }) => {
-            availableDepths[depth] = false;
-          });
-          let depth = 0;
+      } else if (name.startsWith('--suspense-suspend-')) {
+        const [id, componentName, phase, laneBitmaskString, promiseName] = name.substr(19).split('-');
+        const lanes = getLanesFromTransportDecimalBitmask(laneBitmaskString);
+        const availableDepths = new Array(state.unresolvedSuspenseEvents.size + 1).fill(true);
+        state.unresolvedSuspenseEvents.forEach(({
+          depth
+        }) => {
+          availableDepths[depth] = false;
+        });
+        let depth = 0;
 
-          for (let i = 0; i < availableDepths.length; i++) {
-            if (availableDepths[i]) {
-              depth = i;
-              break;
-            }
-          } // TODO (scheduling profiler) Maybe we should calculate depth in post,
-          // so unresolved Suspense requests don't take up space.
-          // We can't know if they'll be resolved or not at this point.
-          // We'll just give them a default (fake) duration width.
-
-
-          const suspenseEvent = {
-            componentName,
-            depth,
-            duration: null,
-            id,
-            phase: phase,
-            promiseName: promiseName || null,
-            resolution: 'unresolved',
-            resuspendTimestamps: null,
-            timestamp: startTime,
-            type: 'suspense',
-            warning: null
-          };
-
-          if (phase === 'update') {
-            // If a component suspended during an update, we should verify that it was during a transition.
-            // We need the lane metadata to verify this though.
-            // Since that data is only logged during commit, we may not have it yet.
-            // Store these events for post-processing then.
-            state.potentialSuspenseEventsOutsideOfTransition.push([suspenseEvent, lanes]);
+        for (let i = 0; i < availableDepths.length; i++) {
+          if (availableDepths[i]) {
+            depth = i;
+            break;
           }
+        } // TODO (timeline) Maybe we should calculate depth in post,
+        // so unresolved Suspense requests don't take up space.
+        // We can't know if they'll be resolved or not at this point.
+        // We'll just give them a default (fake) duration width.
 
-          currentProfilerData.suspenseEvents.push(suspenseEvent);
-          state.unresolvedSuspenseEvents.set(id, suspenseEvent);
-        } else if (name.startsWith('--suspense-resuspend-')) {
-          const [id] = name.substr(21).split('-');
-          const suspenseEvent = state.unresolvedSuspenseEvents.get(id);
 
-          if (suspenseEvent != null) {
-            if (suspenseEvent.resuspendTimestamps === null) {
-              suspenseEvent.resuspendTimestamps = [startTime];
+        const suspenseEvent = {
+          componentName,
+          depth,
+          duration: null,
+          id,
+          phase: phase,
+          promiseName: promiseName || null,
+          resolution: 'unresolved',
+          timestamp: startTime,
+          type: 'suspense',
+          warning: null
+        };
+
+        if (phase === 'update') {
+          // If a component suspended during an update, we should verify that it was during a transition.
+          // We need the lane metadata to verify this though.
+          // Since that data is only logged during commit, we may not have it yet.
+          // Store these events for post-processing then.
+          state.potentialSuspenseEventsOutsideOfTransition.push([suspenseEvent, lanes]);
+        }
+
+        currentProfilerData.suspenseEvents.push(suspenseEvent);
+        state.unresolvedSuspenseEvents.set(id, suspenseEvent);
+      } else if (name.startsWith('--suspense-resolved-')) {
+        const [id] = name.substr(20).split('-');
+        const suspenseEvent = state.unresolvedSuspenseEvents.get(id);
+
+        if (suspenseEvent != null) {
+          state.unresolvedSuspenseEvents.delete(id);
+          suspenseEvent.duration = startTime - suspenseEvent.timestamp;
+          suspenseEvent.resolution = 'resolved';
+        }
+      } else if (name.startsWith('--suspense-rejected-')) {
+        const [id] = name.substr(20).split('-');
+        const suspenseEvent = state.unresolvedSuspenseEvents.get(id);
+
+        if (suspenseEvent != null) {
+          state.unresolvedSuspenseEvents.delete(id);
+          suspenseEvent.duration = startTime - suspenseEvent.timestamp;
+          suspenseEvent.resolution = 'rejected';
+        }
+      } else if (name.startsWith('--render-start-')) {
+        if (state.nextRenderShouldGenerateNewBatchID) {
+          state.nextRenderShouldGenerateNewBatchID = false;
+          state.batchUID = state.uidCounter++;
+        } // If this render is the result of a nested update, make a note of it.
+        // Once we're done processing events, we'll check to see if it was a long update and warn about it.
+
+
+        if (state.potentialLongNestedUpdate !== null) {
+          state.potentialLongNestedUpdates.push([state.potentialLongNestedUpdate, state.batchUID]);
+          state.potentialLongNestedUpdate = null;
+        }
+
+        const [laneBitmaskString] = name.substr(15).split('-');
+        throwIfIncomplete('render', state.measureStack);
+
+        if (getLastType(state.measureStack) !== 'render-idle') {
+          markWorkStarted('render-idle', startTime, getLanesFromTransportDecimalBitmask(laneBitmaskString), currentProfilerData, state);
+        }
+
+        markWorkStarted('render', startTime, getLanesFromTransportDecimalBitmask(laneBitmaskString), currentProfilerData, state);
+
+        for (let i = 0; i < state.nativeEventStack.length; i++) {
+          const nativeEvent = state.nativeEventStack[i];
+          const stopTime = nativeEvent.timestamp + nativeEvent.duration; // If React work was scheduled during an event handler, and the event had a long duration,
+          // it might be because the React render was long and stretched the event.
+          // It might also be that the React work was short and that something else stretched the event.
+          // Make a note of this event for now and we'll examine the batch of React render work later.
+          // (We can't know until we're done processing the React update anyway.)
+
+          if (stopTime > startTime) {
+            state.potentialLongEvents.push([nativeEvent, state.batchUID]);
+          }
+        }
+      } else if (name.startsWith('--render-stop') || name.startsWith('--render-yield')) {
+        markWorkCompleted('render', startTime, currentProfilerData, state.measureStack);
+      } else if (name.startsWith('--commit-start-')) {
+        state.nextRenderShouldGenerateNewBatchID = true;
+        const [laneBitmaskString] = name.substr(15).split('-');
+        markWorkStarted('commit', startTime, getLanesFromTransportDecimalBitmask(laneBitmaskString), currentProfilerData, state);
+      } else if (name.startsWith('--commit-stop')) {
+        markWorkCompleted('commit', startTime, currentProfilerData, state.measureStack);
+        markWorkCompleted('render-idle', startTime, currentProfilerData, state.measureStack);
+      } else if (name.startsWith('--layout-effects-start-')) {
+        const [laneBitmaskString] = name.substr(23).split('-');
+        markWorkStarted('layout-effects', startTime, getLanesFromTransportDecimalBitmask(laneBitmaskString), currentProfilerData, state);
+      } else if (name.startsWith('--layout-effects-stop')) {
+        markWorkCompleted('layout-effects', startTime, currentProfilerData, state.measureStack);
+      } else if (name.startsWith('--passive-effects-start-')) {
+        const [laneBitmaskString] = name.substr(24).split('-');
+        markWorkStarted('passive-effects', startTime, getLanesFromTransportDecimalBitmask(laneBitmaskString), currentProfilerData, state);
+      } else if (name.startsWith('--passive-effects-stop')) {
+        markWorkCompleted('passive-effects', startTime, currentProfilerData, state.measureStack);
+      } else if (name.startsWith('--react-internal-module-start-')) {
+        const stackFrameStart = name.substr(30);
+
+        if (!state.internalModuleStackStringSet.has(stackFrameStart)) {
+          state.internalModuleStackStringSet.add(stackFrameStart);
+          const parsedStackFrameStart = parseStackFrame(stackFrameStart);
+          state.internalModuleCurrentStackFrame = parsedStackFrameStart;
+        }
+      } else if (name.startsWith('--react-internal-module-stop-')) {
+        const stackFrameStop = name.substr(29);
+
+        if (!state.internalModuleStackStringSet.has(stackFrameStop)) {
+          state.internalModuleStackStringSet.add(stackFrameStop);
+          const parsedStackFrameStop = parseStackFrame(stackFrameStop);
+
+          if (parsedStackFrameStop !== null && state.internalModuleCurrentStackFrame !== null) {
+            const parsedStackFrameStart = state.internalModuleCurrentStackFrame;
+            state.internalModuleCurrentStackFrame = null;
+            const range = [parsedStackFrameStart, parsedStackFrameStop];
+            const ranges = currentProfilerData.internalModuleSourceToRanges.get(parsedStackFrameStart.fileName);
+
+            if (ranges == null) {
+              currentProfilerData.internalModuleSourceToRanges.set(parsedStackFrameStart.fileName, [range]);
             } else {
-              suspenseEvent.resuspendTimestamps.push(startTime);
+              ranges.push(range);
             }
           }
-        } else if (name.startsWith('--suspense-resolved-')) {
-          const [id] = name.substr(20).split('-');
-          const suspenseEvent = state.unresolvedSuspenseEvents.get(id);
-
-          if (suspenseEvent != null) {
-            state.unresolvedSuspenseEvents.delete(id);
-            suspenseEvent.duration = startTime - suspenseEvent.timestamp;
-            suspenseEvent.resolution = 'resolved';
-          }
-        } else if (name.startsWith('--suspense-rejected-')) {
-          const [id] = name.substr(20).split('-');
-          const suspenseEvent = state.unresolvedSuspenseEvents.get(id);
-
-          if (suspenseEvent != null) {
-            state.unresolvedSuspenseEvents.delete(id);
-            suspenseEvent.duration = startTime - suspenseEvent.timestamp;
-            suspenseEvent.resolution = 'rejected';
-          }
-        } // eslint-disable-line brace-style
-        // React Measures - render
-        else if (name.startsWith('--render-start-')) {
-            if (state.nextRenderShouldGenerateNewBatchID) {
-              state.nextRenderShouldGenerateNewBatchID = false;
-              state.batchUID = state.uidCounter++;
-            } // If this render is the result of a nested update, make a note of it.
-            // Once we're done processing events, we'll check to see if it was a long update and warn about it.
-
-
-            if (state.potentialLongNestedUpdate !== null) {
-              state.potentialLongNestedUpdates.push([state.potentialLongNestedUpdate, state.batchUID]);
-              state.potentialLongNestedUpdate = null;
-            }
-
-            const [laneBitmaskString] = name.substr(15).split('-');
-            throwIfIncomplete('render', state.measureStack);
-
-            if (getLastType(state.measureStack) !== 'render-idle') {
-              markWorkStarted('render-idle', startTime, getLanesFromTransportDecimalBitmask(laneBitmaskString), currentProfilerData, state);
-            }
-
-            markWorkStarted('render', startTime, getLanesFromTransportDecimalBitmask(laneBitmaskString), currentProfilerData, state);
-
-            for (let i = 0; i < state.nativeEventStack.length; i++) {
-              const nativeEvent = state.nativeEventStack[i];
-              const stopTime = nativeEvent.timestamp + nativeEvent.duration; // If React work was scheduled during an event handler, and the event had a long duration,
-              // it might be because the React render was long and stretched the event.
-              // It might also be that the React work was short and that something else stretched the event.
-              // Make a note of this event for now and we'll examine the batch of React render work later.
-              // (We can't know until we're done processing the React update anyway.)
-
-              if (stopTime > startTime) {
-                state.potentialLongEvents.push([nativeEvent, state.batchUID]);
-              }
-            }
-          } else if (name.startsWith('--render-stop') || name.startsWith('--render-yield')) {
-            markWorkCompleted('render', startTime, currentProfilerData, state.measureStack);
-          } else if (name.startsWith('--render-cancel')) {
-            state.nextRenderShouldGenerateNewBatchID = true;
-            markWorkCompleted('render', startTime, currentProfilerData, state.measureStack);
-            markWorkCompleted('render-idle', startTime, currentProfilerData, state.measureStack);
-          } // eslint-disable-line brace-style
-          // React Measures - commits
-          else if (name.startsWith('--commit-start-')) {
-              state.nextRenderShouldGenerateNewBatchID = true;
-              const [laneBitmaskString] = name.substr(15).split('-');
-              markWorkStarted('commit', startTime, getLanesFromTransportDecimalBitmask(laneBitmaskString), currentProfilerData, state);
-            } else if (name.startsWith('--commit-stop')) {
-              markWorkCompleted('commit', startTime, currentProfilerData, state.measureStack);
-              markWorkCompleted('render-idle', startTime, currentProfilerData, state.measureStack);
-            } // eslint-disable-line brace-style
-            // React Measures - layout effects
-            else if (name.startsWith('--layout-effects-start-')) {
-                const [laneBitmaskString] = name.substr(23).split('-');
-                markWorkStarted('layout-effects', startTime, getLanesFromTransportDecimalBitmask(laneBitmaskString), currentProfilerData, state);
-              } else if (name.startsWith('--layout-effects-stop')) {
-                markWorkCompleted('layout-effects', startTime, currentProfilerData, state.measureStack);
-              } // eslint-disable-line brace-style
-              // React Measures - passive effects
-              else if (name.startsWith('--passive-effects-start-')) {
-                  const [laneBitmaskString] = name.substr(24).split('-');
-                  markWorkStarted('passive-effects', startTime, getLanesFromTransportDecimalBitmask(laneBitmaskString), currentProfilerData, state);
-                } else if (name.startsWith('--passive-effects-stop')) {
-                  markWorkCompleted('passive-effects', startTime, currentProfilerData, state.measureStack);
-                } // eslint-disable-line brace-style
-                // Internal module ranges
-                else if (name.startsWith('--react-internal-module-start-')) {
-                    const stackFrameStart = name.substr(30);
-
-                    if (!state.internalModuleStackStringSet.has(stackFrameStart)) {
-                      state.internalModuleStackStringSet.add(stackFrameStart);
-                      const parsedStackFrameStart = parseStackFrame(stackFrameStart);
-                      state.internalModuleCurrentStackFrame = parsedStackFrameStart;
-                    }
-                  } else if (name.startsWith('--react-internal-module-stop-')) {
-                    const stackFrameStop = name.substr(19);
-
-                    if (!state.internalModuleStackStringSet.has(stackFrameStop)) {
-                      state.internalModuleStackStringSet.add(stackFrameStop);
-                      const parsedStackFrameStop = parseStackFrame(stackFrameStop);
-
-                      if (parsedStackFrameStop !== null && state.internalModuleCurrentStackFrame !== null) {
-                        const parsedStackFrameStart = state.internalModuleCurrentStackFrame;
-                        state.internalModuleCurrentStackFrame = null;
-                        const range = [parsedStackFrameStart, parsedStackFrameStop];
-                        const ranges = currentProfilerData.internalModuleSourceToRanges.get(parsedStackFrameStart.fileName);
-
-                        if (ranges == null) {
-                          currentProfilerData.internalModuleSourceToRanges.set(parsedStackFrameStart.fileName, [range]);
-                        } else {
-                          ranges.push(range);
-                        }
-                      }
-                    }
-                  } // eslint-disable-line brace-style
-                  // Other user timing marks/measures
-                  else if (ph === 'R' || ph === 'n') {
-                      // User Timing mark
-                      currentProfilerData.otherUserTimingMarks.push({
-                        name,
-                        timestamp: startTime
-                      });
-                    } else if (ph === 'b') {// TODO: Begin user timing measure
-                    } else if (ph === 'e') {// TODO: End user timing measure
-                    } else if (ph === 'i' || ph === 'I') {// Instant events.
-                      // Note that the capital "I" is a deprecated value that exists in Chrome Canary traces.
-                    } // eslint-disable-line brace-style
-                    // Unrecognized event
-                    else {
-                        throw new InvalidProfileError(`Unrecognized event ${JSON.stringify(event)}! This is likely a bug in this profiler tool.`);
-                      }
+        }
+      } else if (ph === 'R' || ph === 'n') {
+        // User Timing mark
+        currentProfilerData.otherUserTimingMarks.push({
+          name,
+          timestamp: startTime
+        });
+      } else if (ph === 'b') {// TODO: Begin user timing measure
+      } else if (ph === 'e') {// TODO: End user timing measure
+      } else if (ph === 'i' || ph === 'I') {// Instant events.
+        // Note that the capital "I" is a deprecated value that exists in Chrome Canary traces.
+      } else {
+        throw new InvalidProfileError(`Unrecognized event ${JSON.stringify(event)}! This is likely a bug in this profiler tool.`);
+      }
 
       break;
   }
@@ -4608,6 +4581,7 @@ async function preprocessData(timeline) {
     reactVersion: null,
     schedulingEvents: [],
     snapshots: [],
+    snapshotHeight: 0,
     startTime: 0,
     suspenseEvents: [],
     thrownErrors: []
@@ -4692,8 +4666,10 @@ async function preprocessData(timeline) {
       // Don't warn about transition updates scheduled during the commit phase.
       // e.g. useTransition, useDeferredValue
       // These are allowed to be long-running.
-      if (!schedulingEvent.lanes.some(lane => profilerData.laneToLabelMap.get(lane) === 'Transition')) {
-        schedulingEvent.warning = WARNING_STRINGS.NESTED_UPDATE;
+      if (!schedulingEvent.lanes.some(lane => profilerData.laneToLabelMap.get(lane) === 'Transition')) {// FIXME: This warning doesn't account for "nested updates" that are
+        // spawned by useDeferredValue. Disabling temporarily until we figure
+        // out the right way to handle this.
+        // schedulingEvent.warning = WARNING_STRINGS.NESTED_UPDATE;
       }
     }
   });
@@ -4705,14 +4681,23 @@ async function preprocessData(timeline) {
   }); // Wait for any async processing to complete before returning.
   // Since processing is done in a worker, async work must complete before data is serialized and returned.
 
-  await Promise.all(state.asyncProcessingPromises);
+  await Promise.all(state.asyncProcessingPromises); // Now that all images have been loaded, let's figure out the display size we're going to use for our thumbnails:
+  // both the ones rendered to the canvas and the ones shown on hover.
+
+  if (profilerData.snapshots.length > 0) {
+    // NOTE We assume a static window size here, which is not necessarily true but should be for most cases.
+    // Regardless, Chrome also sets a single size/ratio and stick with it- so we'll do the same.
+    const snapshot = profilerData.snapshots[0];
+    profilerData.snapshotHeight = Math.min(snapshot.height, SNAPSHOT_MAX_HEIGHT);
+  }
+
   return profilerData;
 }
-// EXTERNAL MODULE: /Users/jstejada/code/jstejada-react/node_modules/nullthrows/nullthrows.js
+// EXTERNAL MODULE: /Users/luna/code/react/node_modules/nullthrows/nullthrows.js
 var nullthrows = __webpack_require__(4);
 var nullthrows_default = /*#__PURE__*/__webpack_require__.n(nullthrows);
 
-// CONCATENATED MODULE: ../react-devtools-scheduling-profiler/src/import-worker/readInputData.js
+// CONCATENATED MODULE: ../react-devtools-timeline/src/import-worker/readInputData.js
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -4745,7 +4730,7 @@ const readInputData = file => {
     fileReader.readAsText(file);
   });
 };
-// CONCATENATED MODULE: ../react-devtools-scheduling-profiler/src/import-worker/importFile.js
+// CONCATENATED MODULE: ../react-devtools-timeline/src/import-worker/importFile.js
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -4786,7 +4771,7 @@ async function importFile(file) {
     }
   }
 }
-// CONCATENATED MODULE: /Users/jstejada/code/jstejada-react/node_modules/workerize-loader/dist/rpc-worker-loader.js!/Users/jstejada/code/jstejada-react/node_modules/babel-loader/lib??ref--2-1!/Users/jstejada/code/jstejada-react/node_modules/babel-loader/lib??ref--3!../react-devtools-scheduling-profiler/src/import-worker/importFile.worker.js
+// CONCATENATED MODULE: /Users/luna/code/react/node_modules/workerize-loader/dist/rpc-worker-loader.js!/Users/luna/code/react/node_modules/babel-loader/lib??ref--2-1!/Users/luna/code/react/node_modules/babel-loader/lib??ref--3!../react-devtools-timeline/src/import-worker/importFile.worker.js
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *

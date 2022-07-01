@@ -1,5 +1,5 @@
 {
-  "version": "2.17.2",
+  "version": "3.0.11",
   "name": "Redux DevTools",
   "description": "Redux DevTools for debugging application's state changes.",
   "manifest_version": 2,
@@ -36,9 +36,7 @@
   ],
   "devtools_page": "devtools.html",
   "web_accessible_resources": [
-    "page.bundle.js",
-    "inject.bundle.js",
-    "redux-devtools-extension.bundle.js"
+    "page.bundle.js"
   ],
   "externally_connectable": {
     "ids": [

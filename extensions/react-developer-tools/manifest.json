@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
   "name": "React Developer Tools",
-  "description": "Adds React debugging tools to the Chrome Developer Tools.\n\nCreated from revision 2f8f60ca8 on 10/31/2021.",
-  "version": "4.21.0",
-  "version_name": "4.21.0 (10/31/2021)",
+  "description": "Adds React debugging tools to the Chrome Developer Tools.\n\nCreated from revision 7f673317f on 5/31/2022.",
+  "version": "4.24.7",
+  "version_name": "4.24.7 (5/31/2022)",
   "icons": {
     "16": "icons/16-production.png",
     "32": "icons/32-production.png",

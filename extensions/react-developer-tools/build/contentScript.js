@@ -81,12 +81,12 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 112);
+/******/ 	return __webpack_require__(__webpack_require__.s = 116);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 112:
+/***/ 116:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -110,10 +110,10 @@ function handleMessageFromDevtools(message) {
   }, '*');
 }
 
-function handleMessageFromPage(evt) {
-  if (evt.source === window && evt.data && evt.data.source === 'react-devtools-bridge') {
+function handleMessageFromPage(event) {
+  if (event.source === window && event.data && event.data.source === 'react-devtools-bridge') {
     backendInitialized = true;
-    port.postMessage(evt.data.payload);
+    port.postMessage(event.data.payload);
   }
 }
 
