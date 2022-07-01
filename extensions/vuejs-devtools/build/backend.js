@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 72039:
+/***/ 13508:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -10,6 +10,8 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
+  "isPerformanceSupported": () => (/* reexport */ isPerformanceSupported),
+  "now": () => (/* reexport */ now),
   "setupDevtoolsPlugin": () => (/* binding */ setupDevtoolsPlugin)
 });
 
@@ -25,7 +27,33 @@ const isProxyAvailable = typeof Proxy === 'function';
 ;// CONCATENATED MODULE: ../api/lib/esm/const.js
 const HOOK_SETUP = 'devtools-plugin:setup';
 const HOOK_PLUGIN_SETTINGS_SET = 'plugin:settings:set';
+;// CONCATENATED MODULE: ../api/lib/esm/time.js
+let supported;
+let perf;
+function isPerformanceSupported() {
+  var _a;
+
+  if (supported !== undefined) {
+    return supported;
+  }
+
+  if (typeof window !== 'undefined' && window.performance) {
+    supported = true;
+    perf = window.performance;
+  } else if (typeof __webpack_require__.g !== 'undefined' && ((_a = __webpack_require__.g.perf_hooks) === null || _a === void 0 ? void 0 : _a.performance)) {
+    supported = true;
+    perf = __webpack_require__.g.perf_hooks.performance;
+  } else {
+    supported = false;
+  }
+
+  return supported;
+}
+function now() {
+  return isPerformanceSupported() ? perf.now() : Date.now();
+}
 ;// CONCATENATED MODULE: ../api/lib/esm/proxy.js
+
 
 class ApiProxy {
   constructor(plugin, hook) {
@@ -65,6 +93,10 @@ class ApiProxy {
         }
 
         currentSettings = value;
+      },
+
+      now() {
+        return now();
       }
 
     };
@@ -140,6 +172,7 @@ class ApiProxy {
 
 
 
+
 function setupDevtoolsPlugin(pluginDescriptor, setupFn) {
   const descriptor = pluginDescriptor;
   const target = getTarget();
@@ -174,6 +207,8 @@ Object.defineProperty(exports, "__esModule", ({
 exports.DevtoolsPluginApiInstance = exports.DevtoolsApi = void 0;
 
 const shared_utils_1 = __webpack_require__(27146);
+
+const devtools_api_1 = __webpack_require__(13508);
 
 const hooks_1 = __webpack_require__(29618);
 
@@ -432,6 +467,10 @@ class DevtoolsApi {
     });
   }
 
+  now() {
+    return (0, devtools_api_1.now)();
+  }
+
 }
 
 exports.DevtoolsApi = DevtoolsApi;
@@ -525,6 +564,10 @@ class DevtoolsPluginApiInstance {
 
   setSettings(value, pluginId) {
     (0, shared_utils_1.setPluginSettings)(pluginId !== null && pluginId !== void 0 ? pluginId : this.plugin.descriptor.id, value);
+  }
+
+  now() {
+    return (0, devtools_api_1.now)();
   }
 
   get enabled() {
@@ -856,12 +899,18 @@ exports.DevtoolsHookable = DevtoolsHookable;
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
-  Object.defineProperty(o, k2, {
-    enumerable: true,
-    get: function () {
-      return m[k];
-    }
-  });
+  var desc = Object.getOwnPropertyDescriptor(m, k);
+
+  if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+    desc = {
+      enumerable: true,
+      get: function () {
+        return m[k];
+      }
+    };
+  }
+
+  Object.defineProperty(o, k2, desc);
 } : function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
   o[k2] = m[k];
@@ -970,7 +1019,7 @@ async function registerAppJob(options, ctx) {
 }
 
 async function createAppRecord(options, backend, ctx) {
-  var _a;
+  var _a, _b, _c;
 
   const rootInstance = await backend.api.getAppRootInstance(options.app);
 
@@ -992,8 +1041,8 @@ async function createAppRecord(options, backend, ctx) {
       instanceMap: new Map(),
       rootInstance,
       perfGroupIds: new Map(),
-      iframe: document !== el.ownerDocument ? el.ownerDocument.location.pathname : null,
-      meta: (_a = options.meta) !== null && _a !== void 0 ? _a : {}
+      iframe: shared_utils_1.isBrowser && document !== el.ownerDocument ? (_b = (_a = el.ownerDocument) === null || _a === void 0 ? void 0 : _a.location) === null || _b === void 0 ? void 0 : _b.pathname : null,
+      meta: (_c = options.meta) !== null && _c !== void 0 ? _c : {}
     };
     options.app.__VUE_DEVTOOLS_APP_RECORD__ = record;
     const rootId = `${record.id}:root`;
@@ -1393,7 +1442,7 @@ exports["default"] = ComponentPicker;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.getComponentInstance = exports.getComponentId = exports.editComponentState = exports.sendEmptyComponentData = exports.markSelectedInstance = exports.sendSelectedComponentData = exports.sendComponentTreeData = void 0;
+exports.sendComponentUpdateTracking = exports.refreshComponentTreeSearch = exports.getComponentInstance = exports.getComponentId = exports.editComponentState = exports.sendEmptyComponentData = exports.markSelectedInstance = exports.sendSelectedComponentData = exports.sendComponentTreeData = void 0;
 
 const shared_utils_1 = __webpack_require__(27146);
 
@@ -1546,6 +1595,76 @@ function getComponentInstance(appRecord, instanceId, ctx) {
 }
 
 exports.getComponentInstance = getComponentInstance;
+
+async function refreshComponentTreeSearch(ctx) {
+  if (!ctx.currentAppRecord.componentFilter) return;
+  await sendComponentTreeData(ctx.currentAppRecord, '_root', ctx.currentAppRecord.componentFilter, null, ctx);
+}
+
+exports.refreshComponentTreeSearch = refreshComponentTreeSearch;
+
+async function sendComponentUpdateTracking(instanceId, ctx) {
+  if (!instanceId) return;
+  const payload = {
+    instanceId,
+    time: Date.now() // Use normal date
+
+  };
+  ctx.bridge.send(shared_utils_1.BridgeEvents.TO_FRONT_COMPONENT_UPDATED, payload);
+}
+
+exports.sendComponentUpdateTracking = sendComponentUpdateTracking;
+
+/***/ }),
+
+/***/ 78693:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.flashComponent = void 0;
+
+async function flashComponent(instance, backend) {
+  const bounds = await backend.api.getComponentBounds(instance);
+
+  if (bounds) {
+    let overlay = instance.__VUE_DEVTOOLS_FLASH;
+
+    if (!overlay) {
+      overlay = document.createElement('div');
+      instance.__VUE_DEVTOOLS_FLASH = overlay;
+      overlay.style.border = '2px rgba(65, 184, 131, 0.7) solid';
+      overlay.style.position = 'fixed';
+      overlay.style.zIndex = '99999999999998';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.borderRadius = '3px';
+      overlay.style.boxSizing = 'border-box';
+      document.body.appendChild(overlay);
+    }
+
+    overlay.style.opacity = '1';
+    overlay.style.transition = null;
+    overlay.style.width = Math.round(bounds.width) + 'px';
+    overlay.style.height = Math.round(bounds.height) + 'px';
+    overlay.style.left = Math.round(bounds.left) + 'px';
+    overlay.style.top = Math.round(bounds.top) + 'px';
+    requestAnimationFrame(() => {
+      overlay.style.transition = 'opacity 1s';
+      overlay.style.opacity = '0';
+    });
+    clearTimeout(overlay._timer);
+    overlay._timer = setTimeout(() => {
+      document.body.removeChild(overlay);
+      instance.__VUE_DEVTOOLS_FLASH = null;
+    }, 1000);
+  }
+}
+
+exports.flashComponent = flashComponent;
 
 /***/ }),
 
@@ -1777,6 +1896,8 @@ const shared_utils_1 = __webpack_require__(27146);
 
 const debounce_1 = __importDefault(__webpack_require__(54073));
 
+const throttle_1 = __importDefault(__webpack_require__(12436));
+
 const global_hook_1 = __webpack_require__(13179);
 
 const subscriptions_1 = __webpack_require__(19815);
@@ -1791,6 +1912,8 @@ const component_1 = __webpack_require__(63304);
 
 const plugin_1 = __webpack_require__(42989);
 
+const devtools_api_1 = __webpack_require__(13508);
+
 const app_1 = __webpack_require__(79132);
 
 const inspector_1 = __webpack_require__(96048);
@@ -1803,6 +1926,8 @@ const page_config_1 = __webpack_require__(26639);
 
 const timeline_marker_1 = __webpack_require__(72063);
 
+const flash_js_1 = __webpack_require__(78693);
+
 let ctx = (_a = shared_utils_1.target.__vdevtools_ctx) !== null && _a !== void 0 ? _a : null;
 let connected = (_b = shared_utils_1.target.__vdevtools_connected) !== null && _b !== void 0 ? _b : false;
 
@@ -1811,6 +1936,7 @@ async function initBackend(bridge) {
     bridge,
     persist: false
   });
+  shared_utils_1.SharedData.isBrowser = shared_utils_1.isBrowser;
   (0, page_config_1.initOnPageConfig)();
 
   if (!connected) {
@@ -1864,8 +1990,26 @@ async function connect() {
     await (0, app_1.removeApp)(app, ctx);
   }); // Components
 
+  const sendComponentUpdate = (0, throttle_1.default)(async (appRecord, id) => {
+    try {
+      // Update component inspector
+      if (id && (0, subscriptions_1.isSubscribed)(shared_utils_1.BridgeSubscriptions.SELECTED_COMPONENT_DATA, sub => sub.payload.instanceId === id)) {
+        await (0, component_1.sendSelectedComponentData)(appRecord, id, ctx);
+      } // Update tree (tags)
+
+
+      if ((0, subscriptions_1.isSubscribed)(shared_utils_1.BridgeSubscriptions.COMPONENT_TREE, sub => sub.payload.instanceId === id)) {
+        await (0, component_1.sendComponentTreeData)(appRecord, id, appRecord.componentFilter, 0, ctx);
+      }
+    } catch (e) {
+      if (shared_utils_1.SharedData.debugInfo) {
+        console.error(e);
+      }
+    }
+  }, 100);
   global_hook_1.hook.on(shared_utils_1.HookEvents.COMPONENT_UPDATED, async (app, uid, parentUid, component) => {
     try {
+      if (!app || !uid || !component) return;
       let id;
       let appRecord;
 
@@ -1875,17 +2019,17 @@ async function connect() {
       } else {
         id = ctx.currentInspectedComponentId;
         appRecord = ctx.currentAppRecord;
-      } // Update component inspector
-
-
-      if (id && (0, subscriptions_1.isSubscribed)(shared_utils_1.BridgeSubscriptions.SELECTED_COMPONENT_DATA, sub => sub.payload.instanceId === id)) {
-        (0, component_1.sendSelectedComponentData)(appRecord, id, ctx);
-      } // Update tree (tags)
-
-
-      if ((0, subscriptions_1.isSubscribed)(shared_utils_1.BridgeSubscriptions.COMPONENT_TREE, sub => sub.payload.instanceId === id)) {
-        (0, component_1.sendComponentTreeData)(appRecord, id, appRecord.componentFilter, 0, ctx);
       }
+
+      if (shared_utils_1.SharedData.trackUpdates) {
+        await (0, component_1.sendComponentUpdateTracking)(id, ctx);
+      }
+
+      if (shared_utils_1.SharedData.flashUpdates) {
+        await (0, flash_js_1.flashComponent)(component, appRecord.backend);
+      }
+
+      await sendComponentUpdate(appRecord, id);
     } catch (e) {
       if (shared_utils_1.SharedData.debugInfo) {
         console.error(e);
@@ -1894,6 +2038,7 @@ async function connect() {
   });
   global_hook_1.hook.on(shared_utils_1.HookEvents.COMPONENT_ADDED, async (app, uid, parentUid, component) => {
     try {
+      if (!app || !uid || !component) return;
       const id = await (0, component_1.getComponentId)(app, uid, component, ctx);
       const appRecord = await (0, app_1.getAppRecord)(app, ctx);
 
@@ -1912,21 +2057,35 @@ async function connect() {
 
         if (parentInstances.length) {
           // Check two parents level to update `hasChildren
-          for (let i = 0; i < 2 && i < parentInstances.length; i++) {
+          for (let i = 0; i < parentInstances.length; i++) {
             const parentId = await (0, component_1.getComponentId)(app, parentUid, parentInstances[i], ctx);
 
-            if ((0, subscriptions_1.isSubscribed)(shared_utils_1.BridgeSubscriptions.COMPONENT_TREE, sub => sub.payload.instanceId === parentId)) {
-              requestAnimationFrame(() => {
+            if (i < 2 && (0, subscriptions_1.isSubscribed)(shared_utils_1.BridgeSubscriptions.COMPONENT_TREE, sub => sub.payload.instanceId === parentId)) {
+              (0, shared_utils_1.raf)(() => {
                 (0, component_1.sendComponentTreeData)(appRecord, parentId, appRecord.componentFilter, null, ctx);
               });
+            }
+
+            if (shared_utils_1.SharedData.trackUpdates) {
+              await (0, component_1.sendComponentUpdateTracking)(parentId, ctx);
             }
           }
         }
       }
 
       if (ctx.currentInspectedComponentId === id) {
-        (0, component_1.sendSelectedComponentData)(appRecord, id, ctx);
+        await (0, component_1.sendSelectedComponentData)(appRecord, id, ctx);
       }
+
+      if (shared_utils_1.SharedData.trackUpdates) {
+        await (0, component_1.sendComponentUpdateTracking)(id, ctx);
+      }
+
+      if (shared_utils_1.SharedData.flashUpdates) {
+        await (0, flash_js_1.flashComponent)(component, appRecord.backend);
+      }
+
+      await (0, component_1.refreshComponentTreeSearch)(ctx);
     } catch (e) {
       if (shared_utils_1.SharedData.debugInfo) {
         console.error(e);
@@ -1935,6 +2094,7 @@ async function connect() {
   });
   global_hook_1.hook.on(shared_utils_1.HookEvents.COMPONENT_REMOVED, async (app, uid, parentUid, component) => {
     try {
+      if (!app || !uid || !component) return;
       const appRecord = await (0, app_1.getAppRecord)(app, ctx);
 
       if (parentUid != null) {
@@ -1944,7 +2104,7 @@ async function connect() {
           const parentId = await (0, component_1.getComponentId)(app, parentUid, parentInstances[0], ctx);
 
           if ((0, subscriptions_1.isSubscribed)(shared_utils_1.BridgeSubscriptions.COMPONENT_TREE, sub => sub.payload.instanceId === parentId)) {
-            requestAnimationFrame(async () => {
+            (0, shared_utils_1.raf)(async () => {
               try {
                 (0, component_1.sendComponentTreeData)(await (0, app_1.getAppRecord)(app, ctx), parentId, appRecord.componentFilter, null, ctx);
               } catch (e) {
@@ -1960,15 +2120,22 @@ async function connect() {
       const id = await (0, component_1.getComponentId)(app, uid, component, ctx);
 
       if ((0, subscriptions_1.isSubscribed)(shared_utils_1.BridgeSubscriptions.SELECTED_COMPONENT_DATA, sub => sub.payload.instanceId === id)) {
-        (0, component_1.sendEmptyComponentData)(id, ctx);
+        await (0, component_1.sendEmptyComponentData)(id, ctx);
       }
 
       appRecord.instanceMap.delete(id);
+      await (0, component_1.refreshComponentTreeSearch)(ctx);
     } catch (e) {
       if (shared_utils_1.SharedData.debugInfo) {
         console.error(e);
       }
     }
+  });
+  global_hook_1.hook.on(shared_utils_1.HookEvents.TRACK_UPDATE, (id, ctx) => {
+    (0, component_1.sendComponentUpdateTracking)(id, ctx);
+  });
+  global_hook_1.hook.on(shared_utils_1.HookEvents.FLASH_UPDATE, (instance, backend) => {
+    (0, flash_js_1.flashComponent)(instance, backend);
   }); // Component perf
 
   global_hook_1.hook.on(shared_utils_1.HookEvents.PERFORMANCE_START, async (app, uid, vm, type, time) => {
@@ -2076,7 +2243,7 @@ async function connect() {
   try {
     await (0, timeline_marker_1.addTimelineMarker)({
       id: 'vue-devtools-init-backend',
-      time: Date.now(),
+      time: (0, devtools_api_1.now)(),
       label: 'Vue Devtools connected',
       color: 0x41B883,
       all: true
@@ -2163,7 +2330,7 @@ function connectBridge() {
 
       if (el) {
         // @ts-ignore
-        window.__VUE_DEVTOOLS_INSPECT_TARGET__ = el;
+        shared_utils_1.target.__VUE_DEVTOOLS_INSPECT_TARGET__ = el;
         ctx.bridge.send(shared_utils_1.BridgeEvents.TO_FRONT_COMPONENT_INSPECT_DOM, null);
       }
     }
@@ -2171,6 +2338,7 @@ function connectBridge() {
   ctx.bridge.on(shared_utils_1.BridgeEvents.TO_BACK_COMPONENT_SCROLL_TO, async ({
     instanceId
   }) => {
+    if (!shared_utils_1.isBrowser) return;
     const instance = (0, component_1.getComponentInstance)(ctx.currentAppRecord, instanceId, ctx);
 
     if (instance) {
@@ -2213,6 +2381,7 @@ function connectBridge() {
   ctx.bridge.on(shared_utils_1.BridgeEvents.TO_BACK_COMPONENT_RENDER_CODE, async ({
     instanceId
   }) => {
+    if (!shared_utils_1.isBrowser) return;
     const instance = (0, component_1.getComponentInstance)(ctx.currentAppRecord, instanceId, ctx);
 
     if (instance) {
@@ -2336,15 +2505,17 @@ function connectBridge() {
   ctx.bridge.on(shared_utils_1.BridgeEvents.TO_BACK_CUSTOM_INSPECTOR_ACTION, async ({
     inspectorId,
     appId,
-    actionIndex
+    actionIndex,
+    actionType,
+    args
   }) => {
     const inspector = await (0, inspector_1.getInspectorWithAppId)(inspectorId, appId, ctx);
 
     if (inspector) {
-      const action = inspector.actions[actionIndex];
+      const action = inspector[actionType !== null && actionType !== void 0 ? actionType : 'actions'][actionIndex];
 
       try {
-        await action.action();
+        await action.action(...(args !== null && args !== void 0 ? args : []));
       } catch (e) {
         if (shared_utils_1.SharedData.debugInfo) {
           console.error(e);
@@ -2456,7 +2627,7 @@ async function editInspectorState(inspector, nodeId, dotPath, type, state, ctx) 
 exports.editInspectorState = editInspectorState;
 
 async function sendCustomInspectors(ctx) {
-  var _a;
+  var _a, _b;
 
   const inspectors = [];
 
@@ -2471,6 +2642,10 @@ async function sendCustomInspectors(ctx) {
       stateFilterPlaceholder: i.stateFilterPlaceholder,
       noSelectionText: i.noSelectionText,
       actions: (_a = i.actions) === null || _a === void 0 ? void 0 : _a.map(a => ({
+        icon: a.icon,
+        tooltip: a.tooltip
+      })),
+      nodeActions: (_b = i.nodeActions) === null || _b === void 0 ? void 0 : _b.map(a => ({
         icon: a.icon,
         tooltip: a.tooltip
       }))
@@ -2705,6 +2880,18 @@ async function performanceMarkStart(app, uid, instance, type, time, ctx) {
         groupId
       }
     }, app, ctx);
+
+    if (markEndQueue.has(groupKey)) {
+      const {
+        app,
+        uid,
+        instance,
+        type,
+        time
+      } = markEndQueue.get(groupKey);
+      markEndQueue.delete(groupKey);
+      await performanceMarkEnd(app, uid, instance, type, time, ctx);
+    }
   } catch (e) {
     if (shared_utils_1.SharedData.debugInfo) {
       console.error(e);
@@ -2713,6 +2900,7 @@ async function performanceMarkStart(app, uid, instance, type, time, ctx) {
 }
 
 exports.performanceMarkStart = performanceMarkStart;
+const markEndQueue = new Map();
 
 async function performanceMarkEnd(app, uid, instance, type, time, ctx) {
   try {
@@ -2720,10 +2908,23 @@ async function performanceMarkEnd(app, uid, instance, type, time, ctx) {
     const appRecord = await (0, app_1.getAppRecord)(app, ctx);
     const componentName = await appRecord.backend.api.getComponentName(instance);
     const groupKey = `${uid}-${type}`;
+    const groupInfo = appRecord.perfGroupIds.get(groupKey);
+
+    if (!groupInfo) {
+      markEndQueue.set(groupKey, {
+        app,
+        uid,
+        instance,
+        type,
+        time
+      });
+      return;
+    }
+
     const {
       groupId,
       time: startTime
-    } = appRecord.perfGroupIds.get(groupKey);
+    } = groupInfo;
     const duration = time - startTime;
     await (0, timeline_1.addTimelineEvent)({
       layerId: 'performance',
@@ -2776,7 +2977,7 @@ async function performanceMarkEnd(app, uid, instance, type, time, ctx) {
         const id = await (0, component_1.getComponentId)(app, uid, instance, ctx);
 
         if ((0, subscriptions_1.isSubscribed)(shared_utils_1.BridgeSubscriptions.COMPONENT_TREE, sub => sub.payload.instanceId === id)) {
-          requestAnimationFrame(() => {
+          (0, shared_utils_1.raf)(() => {
             (0, component_1.sendComponentTreeData)(appRecord, id, ctx.currentAppRecord.componentFilter, null, ctx);
           });
         }
@@ -2802,14 +3003,14 @@ function handleAddPerformanceTag(backend, ctx) {
 
       for (const type in measures) {
         const d = measures[type];
-        tooltip += `<div>${type}</div><div class="text-right text-black rounded px-1 ${d > 30 ? 'bg-red-400' : d > 10 ? 'bg-yellow-400' : 'bg-green-400'}">${d} ms</div>`;
+        tooltip += `<div>${type}</div><div class="text-right text-black rounded px-1 ${d > 30 ? 'bg-red-400' : d > 10 ? 'bg-yellow-400' : 'bg-green-400'}">${Math.round(d * 1000) / 1000} ms</div>`;
       }
 
       tooltip += '</div>';
       payload.treeNode.tags.push({
         backgroundColor: duration > 30 ? 0xF87171 : 0xFBBF24,
         textColor: 0x000000,
-        label: `${duration} ms`,
+        label: `${Math.round(duration * 1000) / 1000} ms`,
         tooltip
       });
     }
@@ -3041,6 +3242,10 @@ exports.sendTimelineMarkers = exports.addTimelineMarker = void 0;
 
 const shared_utils_1 = __webpack_require__(27146);
 
+const devtools_api_1 = __webpack_require__(13508);
+
+const timeline_1 = __webpack_require__(41515);
+
 async function addTimelineMarker(options, ctx) {
   var _a;
 
@@ -3080,11 +3285,17 @@ exports.sendTimelineMarkers = sendTimelineMarkers;
 async function serializeMarker(marker) {
   var _a;
 
+  let time = marker.time;
+
+  if ((0, devtools_api_1.isPerformanceSupported)() && time < timeline_1.dateThreshold) {
+    time += timeline_1.perfTimeDiff;
+  }
+
   return {
     id: marker.id,
     appId: (_a = marker.appRecord) === null || _a === void 0 ? void 0 : _a.id,
     all: marker.all,
-    time: marker.time,
+    time: Math.round(time * 1000),
     label: marker.label,
     color: marker.color
   };
@@ -3233,9 +3444,11 @@ function clearContent() {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.sendTimelineLayerEvents = exports.removeLayersForApp = exports.sendTimelineEventData = exports.clearTimeline = exports.addTimelineEvent = exports.sendTimelineLayers = exports.addBuiltinLayers = exports.setupTimeline = void 0;
+exports.sendTimelineLayerEvents = exports.removeLayersForApp = exports.sendTimelineEventData = exports.clearTimeline = exports.perfTimeDiff = exports.dateThreshold = exports.addTimelineEvent = exports.sendTimelineLayers = exports.addBuiltinLayers = exports.setupTimeline = void 0;
 
 const shared_utils_1 = __webpack_require__(27146);
+
+const devtools_api_1 = __webpack_require__(13508);
 
 const global_hook_1 = __webpack_require__(13179);
 
@@ -3262,49 +3475,52 @@ function addBuiltinLayers(appRecord, ctx) {
 exports.addBuiltinLayers = addBuiltinLayers;
 
 function setupBuiltinLayers(ctx) {
-  ['mousedown', 'mouseup', 'click', 'dblclick'].forEach(eventType => {
-    // @ts-ignore
-    window.addEventListener(eventType, async event => {
-      await addTimelineEvent({
-        layerId: 'mouse',
-        event: {
-          time: Date.now(),
-          data: {
-            type: eventType,
-            x: event.clientX,
-            y: event.clientY
-          },
-          title: eventType
-        }
-      }, null, ctx);
-    }, {
-      capture: true,
-      passive: true
+  if (shared_utils_1.isBrowser) {
+    ['mousedown', 'mouseup', 'click', 'dblclick'].forEach(eventType => {
+      // @ts-ignore
+      window.addEventListener(eventType, async event => {
+        await addTimelineEvent({
+          layerId: 'mouse',
+          event: {
+            time: (0, devtools_api_1.now)(),
+            data: {
+              type: eventType,
+              x: event.clientX,
+              y: event.clientY
+            },
+            title: eventType
+          }
+        }, null, ctx);
+      }, {
+        capture: true,
+        passive: true
+      });
     });
-  });
-  ['keyup', 'keydown', 'keypress'].forEach(eventType => {
-    // @ts-ignore
-    window.addEventListener(eventType, async event => {
-      await addTimelineEvent({
-        layerId: 'keyboard',
-        event: {
-          time: Date.now(),
-          data: {
-            type: eventType,
-            key: event.key,
-            ctrlKey: event.ctrlKey,
-            shiftKey: event.shiftKey,
-            altKey: event.altKey,
-            metaKey: event.metaKey
-          },
-          title: event.key
-        }
-      }, null, ctx);
-    }, {
-      capture: true,
-      passive: true
+    ['keyup', 'keydown', 'keypress'].forEach(eventType => {
+      // @ts-ignore
+      window.addEventListener(eventType, async event => {
+        await addTimelineEvent({
+          layerId: 'keyboard',
+          event: {
+            time: (0, devtools_api_1.now)(),
+            data: {
+              type: eventType,
+              key: event.key,
+              ctrlKey: event.ctrlKey,
+              shiftKey: event.shiftKey,
+              altKey: event.altKey,
+              metaKey: event.metaKey
+            },
+            title: event.key
+          }
+        }, null, ctx);
+      }, {
+        capture: true,
+        passive: true
+      });
     });
-  });
+  }
+
   global_hook_1.hook.on(shared_utils_1.HookEvents.COMPONENT_EMIT, async (app, instance, event, params) => {
     try {
       if (!shared_utils_1.SharedData.componentEventsEnabled) return;
@@ -3314,7 +3530,7 @@ function setupBuiltinLayers(ctx) {
       await addTimelineEvent({
         layerId: 'component-event',
         event: {
-          time: Date.now(),
+          time: (0, devtools_api_1.now)(),
           data: {
             component: {
               _custom: {
@@ -3401,11 +3617,20 @@ async function addTimelineEvent(options, app, ctx) {
 }
 
 exports.addTimelineEvent = addTimelineEvent;
+const initialTime = Date.now();
+exports.dateThreshold = initialTime - 1000000;
+exports.perfTimeDiff = initialTime - (0, devtools_api_1.now)();
 
 function mapTimelineEvent(eventData) {
+  let time = eventData.event.time;
+
+  if ((0, devtools_api_1.isPerformanceSupported)() && time < exports.dateThreshold) {
+    time += exports.perfTimeDiff;
+  }
+
   return {
     id: eventData.id,
-    time: eventData.event.time,
+    time: Math.round(time * 1000),
     logType: eventData.event.logType,
     groupId: eventData.event.groupId,
     title: eventData.event.title,
@@ -4193,6 +4418,94 @@ exports.getRootElementsFromComponentInstance = getRootElementsFromComponentInsta
 
 /***/ }),
 
+/***/ 82639:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.applyPerfHooks = exports.initPerf = void 0;
+
+const shared_utils_1 = __webpack_require__(27146);
+
+const tree_1 = __webpack_require__(18059);
+
+const COMPONENT_HOOKS = {
+  beforeCreate: {
+    start: 'create'
+  },
+  created: {
+    end: 'create'
+  },
+  beforeMount: {
+    start: 'mount'
+  },
+  mounted: {
+    end: 'mount'
+  },
+  beforeUpdate: {
+    start: 'update'
+  },
+  updated: {
+    end: 'update'
+  },
+  beforeDestroyed: {
+    start: 'destroy'
+  },
+  destroyed: {
+    end: 'destroy'
+  }
+};
+
+function initPerf(api, app, Vue) {
+  // Global mixin
+  Vue.mixin({
+    beforeCreate() {
+      applyPerfHooks(api, this, app);
+    }
+
+  }); // Apply to existing components
+
+  tree_1.instanceMap === null || tree_1.instanceMap === void 0 ? void 0 : tree_1.instanceMap.forEach(vm => applyPerfHooks(api, vm, app));
+}
+
+exports.initPerf = initPerf;
+
+function applyPerfHooks(api, vm, app) {
+  if (vm.$options.$_devtoolsPerfHooks) return;
+  vm.$options.$_devtoolsPerfHooks = true;
+
+  for (const hook in COMPONENT_HOOKS) {
+    const {
+      start,
+      end
+    } = COMPONENT_HOOKS[hook];
+
+    const handler = function () {
+      if (shared_utils_1.SharedData.performanceMonitoringEnabled) {
+        api.ctx.hook.emit(start ? shared_utils_1.HookEvents.PERFORMANCE_START : shared_utils_1.HookEvents.PERFORMANCE_END, app, this._uid, this, start !== null && start !== void 0 ? start : end, api.now());
+      }
+    };
+
+    const currentValue = vm.$options[hook];
+
+    if (Array.isArray(currentValue)) {
+      vm.$options[hook] = [handler, ...currentValue];
+    } else if (typeof currentValue === 'function') {
+      vm.$options[hook] = [handler, currentValue];
+    } else {
+      vm.$options[hook] = [handler];
+    }
+  }
+}
+
+exports.applyPerfHooks = applyPerfHooks;
+
+/***/ }),
+
 /***/ 18059:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -4207,6 +4520,10 @@ exports.getComponentParents = exports.walkTree = exports.functionalVnodeMap = ex
 const shared_utils_1 = __webpack_require__(27146);
 
 const el_1 = __webpack_require__(66351);
+
+const perf_js_1 = __webpack_require__(82639);
+
+const update_tracking_js_1 = __webpack_require__(44615);
 
 const util_1 = __webpack_require__(95136);
 
@@ -4235,7 +4552,7 @@ function getComponentParents(instance, api, ctx) {
   const captureIds = new Map();
 
   const captureId = vm => {
-    const id = (0, util_1.getUniqueId)(vm);
+    const id = vm.__VUE_DEVTOOLS_UID__ = (0, util_1.getUniqueId)(vm);
     if (captureIds.has(id)) return;
     captureIds.set(id, undefined);
 
@@ -4516,6 +4833,8 @@ function mark(instance) {
     instance.$on('hook:beforeDestroy', function () {
       exports.instanceMap.delete(refId);
     });
+    (0, perf_js_1.applyPerfHooks)(api, instance, appRecord.options.app);
+    (0, update_tracking_js_1.applyTrackingUpdateHook)(api, instance);
   }
 }
 
@@ -4536,6 +4855,77 @@ function markFunctional(id, vnode) {
     vnode
   });
 }
+
+/***/ }),
+
+/***/ 44615:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.applyTrackingUpdateHook = exports.initUpdateTracking = void 0;
+
+const shared_utils_1 = __webpack_require__(27146);
+
+const throttle_1 = __importDefault(__webpack_require__(12436));
+
+const util_js_1 = __webpack_require__(95136);
+
+function initUpdateTracking(api, Vue) {
+  // Global mixin
+  Vue.mixin({
+    beforeCreate() {
+      applyTrackingUpdateHook(api, this);
+    }
+
+  });
+}
+
+exports.initUpdateTracking = initUpdateTracking;
+const COMPONENT_HOOKS = ['created', 'updated'];
+
+function applyTrackingUpdateHook(api, vm) {
+  if (vm.$options.$_devtoolsUpdateTrackingHooks) return;
+  vm.$options.$_devtoolsUpdateTrackingHooks = true;
+  const handler = (0, throttle_1.default)(async function () {
+    if (shared_utils_1.SharedData.trackUpdates) {
+      api.ctx.hook.emit(shared_utils_1.HookEvents.TRACK_UPDATE, (0, util_js_1.getUniqueId)(this), api.ctx);
+      const parents = await api.walkComponentParents(this);
+
+      for (const parent of parents) {
+        api.ctx.hook.emit(shared_utils_1.HookEvents.TRACK_UPDATE, (0, util_js_1.getUniqueId)(parent), api.ctx);
+      }
+    }
+
+    if (shared_utils_1.SharedData.flashUpdates) {
+      api.ctx.hook.emit(shared_utils_1.HookEvents.FLASH_UPDATE, this, api.backend);
+    }
+  }, 100);
+
+  for (const hook of COMPONENT_HOOKS) {
+    const currentValue = vm.$options[hook];
+
+    if (Array.isArray(currentValue)) {
+      vm.$options[hook] = [handler, ...currentValue];
+    } else if (typeof currentValue === 'function') {
+      vm.$options[hook] = [handler, currentValue];
+    } else {
+      vm.$options[hook] = [handler];
+    }
+  }
+}
+
+exports.applyTrackingUpdateHook = applyTrackingUpdateHook;
 
 /***/ }),
 
@@ -4598,7 +4988,7 @@ function getUniqueId(instance, appRecord) {
   }
 
   if (!rootVueId) {
-    console.error('No app record id found for instance', instance);
+    rootVueId = '_unmounted';
   }
 
   return `${rootVueId}:${instance._uid}`;
@@ -4675,7 +5065,11 @@ const data_1 = __webpack_require__(4465);
 
 const el_1 = __webpack_require__(66351);
 
+const perf_js_1 = __webpack_require__(82639);
+
 const tree_1 = __webpack_require__(18059);
+
+const update_tracking_js_1 = __webpack_require__(44615);
 
 const util_1 = __webpack_require__(95136);
 
@@ -4752,13 +5146,20 @@ exports.backend = (0, app_backend_api_1.defineBackend)({
     injectToUtils();
     (0, events_1.wrapVueForEvents)(app, Vue, api.ctx); // Plugin
 
-    (0, plugin_1.setupPlugin)(api, app, Vue);
+    (0, plugin_1.setupPlugin)(api, app, Vue); // Perf
+
+    (0, perf_js_1.initPerf)(api, app, Vue); // Update tracking
+
+    (0, update_tracking_js_1.initUpdateTracking)(api, Vue);
   }
 
 }); // @TODO refactor
 
 function injectToUtils() {
   shared_utils_1.backendInjections.getCustomInstanceDetails = data_1.getCustomInstanceDetails;
+
+  shared_utils_1.backendInjections.getCustomObjectDetails = () => undefined;
+
   shared_utils_1.backendInjections.instanceMap = tree_1.instanceMap;
 
   shared_utils_1.backendInjections.isVueInstance = val => val._isVue;
@@ -4783,7 +5184,7 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.setupPlugin = void 0;
 
-const devtools_api_1 = __webpack_require__(72039);
+const devtools_api_1 = __webpack_require__(13508);
 
 const shared_utils_1 = __webpack_require__(27146);
 
@@ -4855,7 +5256,7 @@ function setupPlugin(api, app, Vue) {
         api.addTimelineEvent({
           layerId: ROUTER_CHANGES_LAYER_ID,
           event: {
-            time: Date.now(),
+            time: api.now(),
             title: to.path,
             data: {
               from,
@@ -4932,7 +5333,7 @@ function setupPlugin(api, app, Vue) {
         api.addTimelineEvent({
           layerId: VUEX_MUTATIONS_ID,
           event: {
-            time: Date.now(),
+            time: api.now(),
             title: mutation.type,
             data
           }
@@ -4950,7 +5351,7 @@ function setupPlugin(api, app, Vue) {
         api.addTimelineEvent({
           layerId: VUEX_ACTIONS_ID,
           event: {
-            time: Date.now(),
+            time: api.now(),
             title: action.type,
             data
           }
@@ -4966,7 +5367,7 @@ function setupPlugin(api, app, Vue) {
           }
 
           action._id = actionId++;
-          action._time = Date.now();
+          action._time = api.now();
           data.state = state;
           api.addTimelineEvent({
             layerId: VUEX_ACTIONS_ID,
@@ -4982,7 +5383,7 @@ function setupPlugin(api, app, Vue) {
         after: (action, state) => {
           const data = {};
 
-          const duration = Date.now() - action._time;
+          const duration = api.now() - action._time;
 
           data.duration = {
             _custom: {
@@ -5001,7 +5402,7 @@ function setupPlugin(api, app, Vue) {
           api.addTimelineEvent({
             layerId: VUEX_ACTIONS_ID,
             event: {
-              time: Date.now(),
+              time: api.now(),
               title: action.type,
               groupId: action._id,
               subtitle: 'end',
@@ -5215,37 +5616,40 @@ function formatStoreForInspectorState(module, getters, path) {
       value: module.context.state[key]
     }))
   };
-  const pathWithSlashes = path.replace(VUEX_MODULE_PATH_SEPARATOR_REG, '/');
-  getters = !module.namespaced || path === VUEX_ROOT_PATH ? module.context.getters : getters[pathWithSlashes];
-  let gettersKeys = Object.keys(getters);
-  const shouldPickGetters = !module.namespaced && path !== VUEX_ROOT_PATH;
 
-  if (shouldPickGetters) {
-    // Only pick the getters defined in the non-namespaced module
-    const definedGettersKeys = Object.keys((_b = module._rawModule.getters) !== null && _b !== void 0 ? _b : {});
-    gettersKeys = gettersKeys.filter(key => definedGettersKeys.includes(key));
-  }
-
-  if (gettersKeys.length) {
-    let moduleGetters;
+  if (getters) {
+    const pathWithSlashes = path.replace(VUEX_MODULE_PATH_SEPARATOR_REG, '/');
+    getters = !module.namespaced || path === VUEX_ROOT_PATH ? module.context.getters : getters[pathWithSlashes];
+    let gettersKeys = Object.keys(getters);
+    const shouldPickGetters = !module.namespaced && path !== VUEX_ROOT_PATH;
 
     if (shouldPickGetters) {
       // Only pick the getters defined in the non-namespaced module
-      moduleGetters = {};
-
-      for (const key of gettersKeys) {
-        moduleGetters[key] = canThrow(() => getters[key]);
-      }
-    } else {
-      moduleGetters = getters;
+      const definedGettersKeys = Object.keys((_b = module._rawModule.getters) !== null && _b !== void 0 ? _b : {});
+      gettersKeys = gettersKeys.filter(key => definedGettersKeys.includes(key));
     }
 
-    const tree = transformPathsToObjectTree(moduleGetters);
-    storeState.getters = Object.keys(tree).map(key => ({
-      key: key.endsWith('/') ? extractNameFromPath(key) : key,
-      editable: false,
-      value: canThrow(() => tree[key])
-    }));
+    if (gettersKeys.length) {
+      let moduleGetters;
+
+      if (shouldPickGetters) {
+        // Only pick the getters defined in the non-namespaced module
+        moduleGetters = {};
+
+        for (const key of gettersKeys) {
+          moduleGetters[key] = canThrow(() => getters[key]);
+        }
+      } else {
+        moduleGetters = getters;
+      }
+
+      const tree = transformPathsToObjectTree(moduleGetters);
+      storeState.getters = Object.keys(tree).map(key => ({
+        key: key.endsWith('/') ? extractNameFromPath(key) : key,
+        editable: false,
+        value: canThrow(() => tree[key])
+      }));
+    }
   }
 
   return storeState;
@@ -5315,7 +5719,7 @@ function canThrow(cb) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.getCustomInstanceDetails = exports.editState = exports.getInstanceDetails = void 0;
+exports.getCustomInstanceDetails = exports.editState = exports.getCustomObjectDetails = exports.getInstanceDetails = void 0;
 
 const util_1 = __webpack_require__(33756);
 
@@ -5429,7 +5833,7 @@ function processSetupState(instance) {
   return Object.keys(instance.setupState).map(key => {
     var _a, _b, _c, _d;
 
-    const value = (0, util_2.returnError)(() => instance.setupState[key]);
+    const value = (0, util_2.returnError)(() => toRaw(instance.setupState[key]));
     const rawData = raw[key];
     let result;
 
@@ -5478,6 +5882,14 @@ function isReadOnly(raw) {
   return !!raw.__v_isReadonly;
 }
 
+function toRaw(value) {
+  if (value === null || value === void 0 ? void 0 : value.__v_raw) {
+    return value.__v_raw;
+  }
+
+  return value;
+}
+
 function getSetupStateInfo(raw) {
   return {
     ref: isRef(raw),
@@ -5486,13 +5898,38 @@ function getSetupStateInfo(raw) {
     readonly: isReadOnly(raw)
   };
 }
+
+function getCustomObjectDetails(object, proto) {
+  var _a, _b, _c, _d;
+
+  const info = getSetupStateInfo(object);
+  const isState = info.ref || info.computed || info.reactive;
+
+  if (isState) {
+    const objectType = info.computed ? 'Computed' : info.ref ? 'Ref' : info.reactive ? 'Reactive' : null;
+    const value = toRaw(info.reactive ? object : object._value);
+    const raw = ((_b = (_a = object.effect) === null || _a === void 0 ? void 0 : _a.raw) === null || _b === void 0 ? void 0 : _b.toString()) || ((_d = (_c = object.effect) === null || _c === void 0 ? void 0 : _c.fn) === null || _d === void 0 ? void 0 : _d.toString());
+    return {
+      _custom: {
+        type: objectType.toLowerCase(),
+        objectType,
+        readOnly: true,
+        value,
+        ...(raw ? {
+          tooltip: `<span class="font-mono">${raw}</span>`
+        } : {})
+      }
+    };
+  }
+}
+
+exports.getCustomObjectDetails = getCustomObjectDetails;
 /**
  * Process the computed properties of an instance.
  *
  * @param {Vue} instance
  * @return {Array}
  */
-
 
 function processComputed(instance, mergedType) {
   const type = mergedType;
@@ -5969,7 +6406,8 @@ class ComponentWalker {
       return [await this.capture(instance, null, depth)];
     } else if (instance.subTree) {
       // TODO functional components
-      return this.findQualifiedChildrenFromList(this.getInternalInstanceChildren(instance.subTree), depth);
+      const list = this.isKeepAlive(instance) ? this.getKeepAliveCachedInstances(instance) : this.getInternalInstanceChildren(instance.subTree);
+      return this.findQualifiedChildrenFromList(list, depth);
     } else {
       return [];
     }
@@ -6006,25 +6444,27 @@ class ComponentWalker {
   getInternalInstanceChildren(subTree, suspense = null) {
     const list = [];
 
-    if (subTree.component) {
-      !suspense ? list.push(subTree.component) : list.push({ ...subTree.component,
-        suspense
-      });
-    } else if (subTree.suspense) {
-      const suspenseKey = !subTree.suspense.isInFallback ? 'suspense default' : 'suspense fallback';
-      list.push(...this.getInternalInstanceChildren(subTree.suspense.activeBranch, { ...subTree.suspense,
-        suspenseKey
-      }));
-    } else if (Array.isArray(subTree.children)) {
-      subTree.children.forEach(childSubTree => {
-        if (childSubTree.component) {
-          !suspense ? list.push(childSubTree.component) : list.push({ ...childSubTree.component,
-            suspense
-          });
-        } else {
-          list.push(...this.getInternalInstanceChildren(childSubTree, suspense));
-        }
-      });
+    if (subTree) {
+      if (subTree.component) {
+        !suspense ? list.push(subTree.component) : list.push({ ...subTree.component,
+          suspense
+        });
+      } else if (subTree.suspense) {
+        const suspenseKey = !subTree.suspense.isInFallback ? 'suspense default' : 'suspense fallback';
+        list.push(...this.getInternalInstanceChildren(subTree.suspense.activeBranch, { ...subTree.suspense,
+          suspenseKey
+        }));
+      } else if (Array.isArray(subTree.children)) {
+        subTree.children.forEach(childSubTree => {
+          if (childSubTree.component) {
+            !suspense ? list.push(childSubTree.component) : list.push({ ...childSubTree.component,
+              suspense
+            });
+          } else {
+            list.push(...this.getInternalInstanceChildren(childSubTree, suspense));
+          }
+        });
+      }
     }
 
     return list.filter(child => {
@@ -6088,8 +6528,8 @@ class ComponentWalker {
     } // keep-alive
 
 
-    if (instance.type.__isKeepAlive && instance.__v_cache) {
-      const cachedComponents = Array.from(instance.__v_cache.values()).map(vnode => vnode.component).filter(Boolean);
+    if (this.isKeepAlive(instance)) {
+      const cachedComponents = this.getKeepAliveCachedInstances(instance);
       const childrenIds = children.map(child => child.__VUE_DEVTOOLS_UID__);
 
       for (const cachedChild of cachedComponents) {
@@ -6150,6 +6590,14 @@ class ComponentWalker {
     if (force || !instanceMap.has(instance.__VUE_DEVTOOLS_UID__)) {
       instanceMap.set(instance.__VUE_DEVTOOLS_UID__, instance);
     }
+  }
+
+  isKeepAlive(instance) {
+    return instance.type.__isKeepAlive && instance.__v_cache;
+  }
+
+  getKeepAliveCachedInstances(instance) {
+    return Array.from(instance.__v_cache.values()).map(vnode => vnode.component).filter(Boolean);
   }
 
 }
@@ -6335,6 +6783,7 @@ exports.backend = (0, app_backend_api_1.defineBackend)({
     api.on.inspectComponent((payload, ctx) => {
       // @TODO refactor
       shared_utils_1.backendInjections.getCustomInstanceDetails = data_1.getCustomInstanceDetails;
+      shared_utils_1.backendInjections.getCustomObjectDetails = data_1.getCustomObjectDetails;
       shared_utils_1.backendInjections.instanceMap = ctx.currentAppRecord.instanceMap;
 
       shared_utils_1.backendInjections.isVueInstance = val => val._ && Object.keys(val._).includes('vnode');
@@ -6441,11 +6890,12 @@ exports.returnError = returnError;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.getCatchedGetters = exports.getCustomStoreDetails = exports.getCustomRouterDetails = exports.isVueInstance = exports.getCustomInstanceDetails = exports.getInstanceMap = exports.backendInjections = void 0;
+exports.getCatchedGetters = exports.getCustomStoreDetails = exports.getCustomRouterDetails = exports.isVueInstance = exports.getCustomObjectDetails = exports.getCustomInstanceDetails = exports.getInstanceMap = exports.backendInjections = void 0;
 exports.backendInjections = {
   instanceMap: new Map(),
   isVueInstance: () => false,
-  getCustomInstanceDetails: () => ({})
+  getCustomInstanceDetails: () => ({}),
+  getCustomObjectDetails: () => undefined
 };
 
 function getInstanceMap() {
@@ -6459,6 +6909,12 @@ function getCustomInstanceDetails(instance) {
 }
 
 exports.getCustomInstanceDetails = getCustomInstanceDetails;
+
+function getCustomObjectDetails(value, proto) {
+  return exports.backendInjections.getCustomObjectDetails(value, proto);
+}
+
+exports.getCustomObjectDetails = getCustomObjectDetails;
 
 function isVueInstance(value) {
   return exports.backendInjections.isVueInstance(value);
@@ -6540,6 +6996,8 @@ Object.defineProperty(exports, "__esModule", ({
 exports.Bridge = void 0;
 
 const events_1 = __webpack_require__(22699);
+
+const raf_1 = __webpack_require__(86283);
 
 const BATCH_DURATION = 100;
 
@@ -6663,7 +7121,7 @@ class Bridge extends events_1.EventEmitter {
     }
 
     this._sending = false;
-    requestAnimationFrame(() => this._nextSend());
+    (0, raf_1.raf)(() => this._nextSend());
   }
 
 }
@@ -6742,7 +7200,8 @@ var BridgeEvents;
   BridgeEvents["TO_BACK_COMPONENT_INSPECT_DOM"] = "b:component:inspect-dom";
   BridgeEvents["TO_FRONT_COMPONENT_INSPECT_DOM"] = "f:component:inspect-dom";
   BridgeEvents["TO_BACK_COMPONENT_RENDER_CODE"] = "b:component:render-code";
-  BridgeEvents["TO_FRONT_COMPONENT_RENDER_CODE"] = "f:component:render-code"; // Timeline
+  BridgeEvents["TO_FRONT_COMPONENT_RENDER_CODE"] = "f:component:render-code";
+  BridgeEvents["TO_FRONT_COMPONENT_UPDATED"] = "f:component:updated"; // Timeline
 
   BridgeEvents["TO_FRONT_TIMELINE_EVENT"] = "f:timeline:event";
   BridgeEvents["TO_BACK_TIMELINE_LAYER_LIST"] = "b:timeline:layer-list";
@@ -6772,6 +7231,7 @@ var BridgeEvents;
   BridgeEvents["TO_FRONT_CUSTOM_INSPECTOR_STATE"] = "f:custom-inspector:state";
   BridgeEvents["TO_BACK_CUSTOM_INSPECTOR_EDIT_STATE"] = "b:custom-inspector:edit-state";
   BridgeEvents["TO_BACK_CUSTOM_INSPECTOR_ACTION"] = "b:custom-inspector:action";
+  BridgeEvents["TO_BACK_CUSTOM_INSPECTOR_NODE_ACTION"] = "b:custom-inspector:node-action";
   BridgeEvents["TO_FRONT_CUSTOM_INSPECTOR_SELECT_NODE"] = "f:custom-inspector:select-node"; // Custom state
 
   BridgeEvents["TO_BACK_CUSTOM_STATE_ACTION"] = "b:custom-state:action";
@@ -6812,6 +7272,16 @@ var HookEvents;
    */
 
   HookEvents["FLUSH"] = "flush";
+  /**
+   * @deprecated
+   */
+
+  HookEvents["TRACK_UPDATE"] = "_track-update";
+  /**
+   * @deprecated
+   */
+
+  HookEvents["FLASH_UPDATE"] = "_flash-update";
 })(HookEvents = exports.HookEvents || (exports.HookEvents = {}));
 
 /***/ }),
@@ -6993,12 +7463,18 @@ exports.initEnv = initEnv;
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
-  Object.defineProperty(o, k2, {
-    enumerable: true,
-    get: function () {
-      return m[k];
-    }
-  });
+  var desc = Object.getOwnPropertyDescriptor(m, k);
+
+  if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+    desc = {
+      enumerable: true,
+      get: function () {
+        return m[k];
+      }
+    };
+  }
+
+  Object.defineProperty(o, k2, desc);
 } : function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
   o[k2] = m[k];
@@ -7035,6 +7511,8 @@ __exportStar(__webpack_require__(58561), exports);
 __exportStar(__webpack_require__(34723), exports);
 
 __exportStar(__webpack_require__(76203), exports);
+
+__exportStar(__webpack_require__(86283), exports);
 
 /***/ }),
 
@@ -7126,6 +7604,37 @@ exports.getPluginDefaultSettings = getPluginDefaultSettings;
 
 /***/ }),
 
+/***/ 86283:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.raf = void 0;
+let pendingCallbacks = [];
+/**
+ * requestAnimationFrame that also works on non-browser environments like Node.
+ */
+
+exports.raf = typeof requestAnimationFrame === 'function' ? requestAnimationFrame : fn => {
+  if (!pendingCallbacks.length) {
+    setImmediate(() => {
+      const now = performance.now();
+      const cbs = pendingCallbacks; // in case cbs add new callbacks
+
+      pendingCallbacks = [];
+      cbs.forEach(cb => cb(now));
+    });
+  }
+
+  pendingCallbacks.push(fn);
+};
+
+/***/ }),
+
 /***/ 29556:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -7167,9 +7676,12 @@ const internalSharedData = {
   pluginSettings: {},
   pageConfig: {},
   legacyApps: false,
-  debugInfo: false
+  trackUpdates: true,
+  flashUpdates: false,
+  debugInfo: false,
+  isBrowser: env_1.isBrowser
 };
-const persisted = ['componentNameStyle', 'theme', 'displayDensity', 'recordVuex', 'editableProps', 'logDetected', 'vuexNewBackend', 'vuexAutoload', 'vuexGroupGettersByModule', 'timeFormat', 'showMenuScrollTip', 'timelineTimeGrid', 'timelineScreenshots', 'menuStepScrolling', 'pluginPermissions', 'pluginSettings', 'performanceMonitoringEnabled', 'componentEventsEnabled', 'debugInfo'];
+const persisted = ['componentNameStyle', 'theme', 'displayDensity', 'recordVuex', 'editableProps', 'logDetected', 'vuexNewBackend', 'vuexAutoload', 'vuexGroupGettersByModule', 'timeFormat', 'showMenuScrollTip', 'timelineTimeGrid', 'timelineScreenshots', 'menuStepScrolling', 'pluginPermissions', 'pluginSettings', 'performanceMonitoringEnabled', 'componentEventsEnabled', 'trackUpdates', 'flashUpdates', 'debugInfo'];
 const storageVersion = '6.0.0-alpha.1'; // ---- INTERNALS ---- //
 
 let bridge; // List of fields to persist to storage (disabled if 'false')
@@ -7846,9 +8358,12 @@ function replacer(key) {
       return encodeCache.cache(val, () => getCustomComponentDefinitionDetails(val));
     } else if (val.constructor && val.constructor.name === 'VNode') {
       return `[native VNode <${val.tag}>]`;
-    } else if (val instanceof HTMLElement) {
+    } else if (typeof HTMLElement !== 'undefined' && val instanceof HTMLElement) {
       return encodeCache.cache(val, () => getCustomHTMLElementDetails(val));
     }
+
+    const customDetails = (0, backend_1.getCustomObjectDetails)(val, proto);
+    if (customDetails != null) return customDetails;
   } else if (Number.isNaN(val)) {
     return exports.NAN;
   }
@@ -8109,7 +8624,7 @@ function revive(val) {
     return Symbol.for(string);
   } else if (specialTypeRE.test(val)) {
     const [, type, string,, details] = specialTypeRE.exec(val);
-    const result = new window[type](string);
+    const result = new env_1.target[type](string);
 
     if (type === 'Error' && details) {
       result.stack = details;
@@ -8797,12 +9312,28 @@ module.exports = function (exec) {
 
 /***/ }),
 
+/***/ 57188:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var fails = __webpack_require__(24229);
+
+module.exports = !fails(function () {
+  var test = (function () { /* empty */ }).bind();
+  // eslint-disable-next-line no-prototype-builtins -- safe
+  return typeof test != 'function' || test.hasOwnProperty('prototype');
+});
+
+
+/***/ }),
+
 /***/ 20266:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var NATIVE_BIND = __webpack_require__(57188);
 
 var call = Function.prototype.call;
 
-module.exports = call.bind ? call.bind(call) : function () {
+module.exports = NATIVE_BIND ? call.bind(call) : function () {
   return call.apply(call, arguments);
 };
 
@@ -8834,14 +9365,16 @@ module.exports = {
 /***/ }),
 
 /***/ 65968:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var NATIVE_BIND = __webpack_require__(57188);
 
 var FunctionPrototype = Function.prototype;
 var bind = FunctionPrototype.bind;
 var call = FunctionPrototype.call;
-var uncurryThis = bind && bind.bind(call, call);
+var uncurryThis = NATIVE_BIND && bind.bind(call, call);
 
-module.exports = bind ? function (fn) {
+module.exports = NATIVE_BIND ? function (fn) {
   return fn && uncurryThis(fn);
 } : function (fn) {
   return fn && function () {
@@ -8937,7 +9470,7 @@ var DESCRIPTORS = __webpack_require__(7400);
 var fails = __webpack_require__(24229);
 var createElement = __webpack_require__(22635);
 
-// Thank's IE8 for his funny defineProperty
+// Thanks to IE8 for its funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function () {
   // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(createElement('div'), 'a', {
@@ -9594,9 +10127,11 @@ var store = __webpack_require__(85353);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.20.2',
+  version: '3.21.1',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2022 Denis Pushkarev (zloirock.ru)'
+  copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
+  license: 'https://github.com/zloirock/core-js/blob/v3.21.1/LICENSE',
+  source: 'https://github.com/zloirock/core-js'
 });
 
 
@@ -11052,6 +11587,82 @@ var now = function() {
 };
 
 module.exports = now;
+
+
+/***/ }),
+
+/***/ 12436:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var debounce = __webpack_require__(54073),
+    isObject = __webpack_require__(29259);
+
+/** Error message constants. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/**
+ * Creates a throttled function that only invokes `func` at most once per
+ * every `wait` milliseconds. The throttled function comes with a `cancel`
+ * method to cancel delayed `func` invocations and a `flush` method to
+ * immediately invoke them. Provide `options` to indicate whether `func`
+ * should be invoked on the leading and/or trailing edge of the `wait`
+ * timeout. The `func` is invoked with the last arguments provided to the
+ * throttled function. Subsequent calls to the throttled function return the
+ * result of the last `func` invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is
+ * invoked on the trailing edge of the timeout only if the throttled function
+ * is invoked more than once during the `wait` timeout.
+ *
+ * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+ * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+ *
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+ * for details over the differences between `_.throttle` and `_.debounce`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to throttle.
+ * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
+ * @param {Object} [options={}] The options object.
+ * @param {boolean} [options.leading=true]
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {boolean} [options.trailing=true]
+ *  Specify invoking on the trailing edge of the timeout.
+ * @returns {Function} Returns the new throttled function.
+ * @example
+ *
+ * // Avoid excessively updating the position while scrolling.
+ * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
+ *
+ * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
+ * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
+ * jQuery(element).on('click', throttled);
+ *
+ * // Cancel the trailing throttled invocation.
+ * jQuery(window).on('popstate', throttled.cancel);
+ */
+function throttle(func, wait, options) {
+  var leading = true,
+      trailing = true;
+
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  if (isObject(options)) {
+    leading = 'leading' in options ? !!options.leading : leading;
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
+  }
+  return debounce(func, wait, {
+    'leading': leading,
+    'maxWait': wait,
+    'trailing': trailing
+  });
+}
+
+module.exports = throttle;
 
 
 /***/ }),

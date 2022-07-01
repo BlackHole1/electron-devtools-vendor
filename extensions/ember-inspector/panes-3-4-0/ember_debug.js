@@ -2317,9 +2317,11 @@ define("ember-debug/libs/source-map", ["exports", "ember-debug/utils/ember/array
    */
   const notFoundError = new Error('Source map url not found');
   exports.default = _object.default.extend({
-    _lastPromise: (0, _object.computed)(function () {
-      return (0, _rsvp.resolve)(undefined, 'ember-inspector');
-    }),
+    init() {
+      this._super(...arguments);
+
+      this.set('_lastPromise', (0, _rsvp.resolve)(undefined, 'ember-inspector'));
+    },
 
     /**
      * Returns a promise that resolves to an array
@@ -4705,13 +4707,8 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
       return true;
     }
 
-    let isInternalProp = ['__LEGACY_OWNER', '__ARGS__', '__HAS_BLOCK__', '__PROPERTY_DID_CHANGE__'].any(internalProp => property.startsWith(internalProp));
-
-    if (isInternalProp) {
-      return true;
-    }
-
-    return false;
+    let isInternalProp = ['__LEGACY_OWNER', '__ARGS__', '__HAS_BLOCK__', '__PROPERTY_DID_CHANGE__'].some(internalProp => property.startsWith(internalProp));
+    return isInternalProp;
   }
 
   function replaceProperty(properties, name, value, options) {
@@ -5903,6 +5900,22 @@ define("ember-debug/utils/dasherize", ["exports"], function (exports) {
     return str.replace(STRING_DASHERIZE_REGEXP, '-');
   }
 });
+define("ember-debug/utils/ember", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  let Ember;
+
+  try {
+    Ember = requireModule('ember')['default'];
+  } catch {
+    Ember = window.Ember;
+  }
+
+  exports.default = Ember;
+});
 define("ember-debug/utils/ember/application", ["exports", "ember-debug/utils/ember"], function (exports, _ember) {
   "use strict";
 
@@ -5919,7 +5932,7 @@ define("ember-debug/utils/ember/application", ["exports", "ember-debug/utils/emb
 
   exports.default = Application;
 });
-define("ember-debug/utils/ember/array/index", ["exports", "ember-debug/utils/ember"], function (exports, _ember) {
+define("ember-debug/utils/ember/array", ["exports", "ember-debug/utils/ember"], function (exports, _ember) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -6013,22 +6026,6 @@ define("ember-debug/utils/ember/debug", ["exports", "ember-debug/utils/ember"], 
   } = _module;
   exports.registerDeprecationHandler = registerDeprecationHandler;
 });
-define("ember-debug/utils/ember/index", ["exports"], function (exports) {
-  "use strict";
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  let Ember;
-
-  try {
-    Ember = requireModule('ember')['default'];
-  } catch {
-    Ember = window.Ember;
-  }
-
-  exports.default = Ember;
-});
 define("ember-debug/utils/ember/instrumentation", ["exports", "ember-debug/utils/ember"], function (exports, _ember) {
   "use strict";
 
@@ -6049,6 +6046,36 @@ define("ember-debug/utils/ember/instrumentation", ["exports", "ember-debug/utils
     subscribe
   } = _module;
   exports.subscribe = subscribe;
+});
+define("ember-debug/utils/ember/object", ["exports", "ember-debug/utils/ember"], function (exports, _ember) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.set = exports.observer = exports.get = exports.computed = undefined;
+
+  let _module, EmberObject;
+
+  try {
+    _module = requireModule('@ember/object');
+    EmberObject = _module.default;
+  } catch {
+    _module = _ember.default;
+    EmberObject = _ember.default.Object;
+  }
+
+  let {
+    computed,
+    get,
+    observer,
+    set
+  } = _module;
+  exports.computed = computed;
+  exports.get = get;
+  exports.observer = observer;
+  exports.set = set;
+  exports.default = EmberObject;
 });
 define("ember-debug/utils/ember/object/computed", ["exports", "ember-debug/utils/ember"], function (exports, _ember) {
   "use strict";
@@ -6096,36 +6123,6 @@ define("ember-debug/utils/ember/object/evented", ["exports", "ember-debug/utils/
   }
 
   exports.default = Evented;
-});
-define("ember-debug/utils/ember/object/index", ["exports", "ember-debug/utils/ember"], function (exports, _ember) {
-  "use strict";
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.set = exports.observer = exports.get = exports.computed = undefined;
-
-  let _module, EmberObject;
-
-  try {
-    _module = requireModule('@ember/object');
-    EmberObject = _module.default;
-  } catch {
-    _module = _ember.default;
-    EmberObject = _ember.default.Object;
-  }
-
-  let {
-    computed,
-    get,
-    observer,
-    set
-  } = _module;
-  exports.computed = computed;
-  exports.get = get;
-  exports.observer = observer;
-  exports.set = set;
-  exports.default = EmberObject;
 });
 define("ember-debug/utils/ember/object/internals", ["exports", "ember-debug/utils/ember"], function (exports, _ember) {
   "use strict";
@@ -9847,11 +9844,6 @@ if (typeof module === "object" && module && module.exports) {
 
 }());
 let Ember;
-try {
-  Ember = requireModule('ember')['default'];
-} catch {
-  Ember = window.Ember;
-}
 
 /* eslint camelcase:0 */
 /**
@@ -9907,7 +9899,11 @@ var EMBER_VERSIONS_SUPPORTED = ['3.4.0',''];
         };
       });
       
-      window.EmberInspector = requireModule('ember-debug/main')['default'];
+      let emberDebugMainModule = requireModule('ember-debug/main');
+      if (!emberDebugMainModule['default']) {
+        return;
+      }
+      window.EmberInspector = emberDebugMainModule['default'];
       window.EmberInspector.Adapter = requireModule('ember-debug/adapters/' + adapter)['default'];
 
       onApplicationStart(function appStarted(instance) {
@@ -9959,11 +9955,12 @@ var EMBER_VERSIONS_SUPPORTED = ['3.4.0',''];
         return;
       }
 
-      let Ember;
-      try {
-        Ember = requireModule('ember')['default'];
-      } catch {
-        Ember = window.Ember;
+      if (!Ember) {
+        try {
+          Ember = requireModule('ember')['default'];
+        } catch {
+          Ember = window.Ember;
+        }
       }
 
       if (!Ember) {
@@ -9979,15 +9976,7 @@ var EMBER_VERSIONS_SUPPORTED = ['3.4.0',''];
     };
 
     // Newest Ember versions >= 1.10
-    window.addEventListener('Ember', triggerOnce, false);
-    // Old Ember versions
-    window.addEventListener('Ember.Application', function() {
-      if (Ember && Ember.VERSION && compareVersion(Ember.VERSION, '1.10.0') === 1) {
-        // Ember >= 1.10 should be handled by `Ember` load hook instead.
-        return;
-      }
-      triggerOnce();
-    }, false);
+    window.addEventListener('Ember', triggerOnce, { once: true });
     // Oldest Ember versions or if this was injected after Ember has loaded.
     onReady(triggerOnce);
   }

@@ -85188,7 +85188,7 @@ __webpack_require__.d(__webpack_exports__, "purgeCachedMetadata", function() { r
 // EXTERNAL MODULE: ../react-devtools-shared/node_modules/@babel/parser/lib/index.js
 var lib = __webpack_require__(62);
 
-// EXTERNAL MODULE: /Users/jstejada/code/jstejada-react/node_modules/lru-cache/index.js
+// EXTERNAL MODULE: /Users/luna/code/react/node_modules/lru-cache/index.js
 var lru_cache = __webpack_require__(63);
 var lru_cache_default = /*#__PURE__*/__webpack_require__.n(lru_cache);
 
@@ -85214,9 +85214,13 @@ const TREE_OPERATION_REORDER_CHILDREN = 3;
 const TREE_OPERATION_UPDATE_TREE_BASE_DURATION = 4;
 const TREE_OPERATION_UPDATE_ERRORS_OR_WARNINGS = 5;
 const TREE_OPERATION_REMOVE_ROOT = 6;
+const TREE_OPERATION_SET_SUBTREE_MODE = 7;
+const PROFILING_FLAG_BASIC_SUPPORT = 0b01;
+const PROFILING_FLAG_TIMELINE_SUPPORT = 0b10;
 const LOCAL_STORAGE_DEFAULT_TAB_KEY = 'React::DevTools::defaultTab';
 const LOCAL_STORAGE_FILTER_PREFERENCES_KEY = 'React::DevTools::componentFilters';
 const SESSION_STORAGE_LAST_SELECTION_KEY = 'React::DevTools::lastSelection';
+const LOCAL_STORAGE_OPEN_IN_EDITOR_URL = 'React::DevTools::openInEditorUrl';
 const LOCAL_STORAGE_PARSE_HOOK_NAMES_KEY = 'React::DevTools::parseHookNames';
 const SESSION_STORAGE_RECORD_CHANGE_DESCRIPTIONS_KEY = 'React::DevTools::recordChangeDescriptions';
 const SESSION_STORAGE_RELOAD_AND_PROFILE_KEY = 'React::DevTools::reloadAndProfile';
@@ -85308,46 +85312,46 @@ const THEME_STYLES = {
     '--color-resize-bar-active': '#dcdcdc',
     '--color-resize-bar-border': '#d1d1d1',
     '--color-resize-bar-dot': '#333333',
-    '--color-scheduling-profiler-internal-module': '#d1d1d1',
-    '--color-scheduling-profiler-internal-module-hover': '#c9c9c9',
-    '--color-scheduling-profiler-internal-module-text': '#444',
-    '--color-scheduling-profiler-native-event': '#ccc',
-    '--color-scheduling-profiler-native-event-hover': '#aaa',
-    '--color-scheduling-profiler-network-primary': '#fcf3dc',
-    '--color-scheduling-profiler-network-primary-hover': '#f0e7d1',
-    '--color-scheduling-profiler-network-secondary': '#efc457',
-    '--color-scheduling-profiler-network-secondary-hover': '#e3ba52',
-    '--color-scheduling-profiler-priority-background': '#f6f6f6',
-    '--color-scheduling-profiler-priority-border': '#eeeeee',
-    '--color-scheduling-profiler-user-timing': '#c9cacd',
-    '--color-scheduling-profiler-user-timing-hover': '#93959a',
-    '--color-scheduling-profiler-react-idle': '#d3e5f6',
-    '--color-scheduling-profiler-react-idle-hover': '#c3d9ef',
-    '--color-scheduling-profiler-react-render': '#9fc3f3',
-    '--color-scheduling-profiler-react-render-hover': '#83afe9',
-    '--color-scheduling-profiler-react-render-text': '#11365e',
-    '--color-scheduling-profiler-react-commit': '#c88ff0',
-    '--color-scheduling-profiler-react-commit-hover': '#b281d6',
-    '--color-scheduling-profiler-react-commit-text': '#3e2c4a',
-    '--color-scheduling-profiler-react-layout-effects': '#b281d6',
-    '--color-scheduling-profiler-react-layout-effects-hover': '#9d71bd',
-    '--color-scheduling-profiler-react-layout-effects-text': '#3e2c4a',
-    '--color-scheduling-profiler-react-passive-effects': '#b281d6',
-    '--color-scheduling-profiler-react-passive-effects-hover': '#9d71bd',
-    '--color-scheduling-profiler-react-passive-effects-text': '#3e2c4a',
-    '--color-scheduling-profiler-react-schedule': '#9fc3f3',
-    '--color-scheduling-profiler-react-schedule-hover': '#2683E2',
-    '--color-scheduling-profiler-react-suspense-rejected': '#f1cc14',
-    '--color-scheduling-profiler-react-suspense-rejected-hover': '#ffdf37',
-    '--color-scheduling-profiler-react-suspense-resolved': '#a6e59f',
-    '--color-scheduling-profiler-react-suspense-resolved-hover': '#89d281',
-    '--color-scheduling-profiler-react-suspense-unresolved': '#c9cacd',
-    '--color-scheduling-profiler-react-suspense-unresolved-hover': '#93959a',
-    '--color-scheduling-profiler-thrown-error': '#ee1638',
-    '--color-scheduling-profiler-thrown-error-hover': '#da1030',
-    '--color-scheduling-profiler-text-color': '#000000',
-    '--color-scheduling-profiler-text-dim-color': '#ccc',
-    '--color-scheduling-profiler-react-work-border': '#eeeeee',
+    '--color-timeline-internal-module': '#d1d1d1',
+    '--color-timeline-internal-module-hover': '#c9c9c9',
+    '--color-timeline-internal-module-text': '#444',
+    '--color-timeline-native-event': '#ccc',
+    '--color-timeline-native-event-hover': '#aaa',
+    '--color-timeline-network-primary': '#fcf3dc',
+    '--color-timeline-network-primary-hover': '#f0e7d1',
+    '--color-timeline-network-secondary': '#efc457',
+    '--color-timeline-network-secondary-hover': '#e3ba52',
+    '--color-timeline-priority-background': '#f6f6f6',
+    '--color-timeline-priority-border': '#eeeeee',
+    '--color-timeline-user-timing': '#c9cacd',
+    '--color-timeline-user-timing-hover': '#93959a',
+    '--color-timeline-react-idle': '#d3e5f6',
+    '--color-timeline-react-idle-hover': '#c3d9ef',
+    '--color-timeline-react-render': '#9fc3f3',
+    '--color-timeline-react-render-hover': '#83afe9',
+    '--color-timeline-react-render-text': '#11365e',
+    '--color-timeline-react-commit': '#c88ff0',
+    '--color-timeline-react-commit-hover': '#b281d6',
+    '--color-timeline-react-commit-text': '#3e2c4a',
+    '--color-timeline-react-layout-effects': '#b281d6',
+    '--color-timeline-react-layout-effects-hover': '#9d71bd',
+    '--color-timeline-react-layout-effects-text': '#3e2c4a',
+    '--color-timeline-react-passive-effects': '#b281d6',
+    '--color-timeline-react-passive-effects-hover': '#9d71bd',
+    '--color-timeline-react-passive-effects-text': '#3e2c4a',
+    '--color-timeline-react-schedule': '#9fc3f3',
+    '--color-timeline-react-schedule-hover': '#2683E2',
+    '--color-timeline-react-suspense-rejected': '#f1cc14',
+    '--color-timeline-react-suspense-rejected-hover': '#ffdf37',
+    '--color-timeline-react-suspense-resolved': '#a6e59f',
+    '--color-timeline-react-suspense-resolved-hover': '#89d281',
+    '--color-timeline-react-suspense-unresolved': '#c9cacd',
+    '--color-timeline-react-suspense-unresolved-hover': '#93959a',
+    '--color-timeline-thrown-error': '#ee1638',
+    '--color-timeline-thrown-error-hover': '#da1030',
+    '--color-timeline-text-color': '#000000',
+    '--color-timeline-text-dim-color': '#ccc',
+    '--color-timeline-react-work-border': '#eeeeee',
     '--color-search-match': 'yellow',
     '--color-search-match-current': '#f7923b',
     '--color-selected-tree-highlight-active': 'rgba(0, 136, 250, 0.1)',
@@ -85451,46 +85455,46 @@ const THEME_STYLES = {
     '--color-resize-bar-active': '#31363f',
     '--color-resize-bar-border': '#3d424a',
     '--color-resize-bar-dot': '#cfd1d5',
-    '--color-scheduling-profiler-internal-module': '#303542',
-    '--color-scheduling-profiler-internal-module-hover': '#363b4a',
-    '--color-scheduling-profiler-internal-module-text': '#7f8899',
-    '--color-scheduling-profiler-native-event': '#b2b2b2',
-    '--color-scheduling-profiler-native-event-hover': '#949494',
-    '--color-scheduling-profiler-network-primary': '#fcf3dc',
-    '--color-scheduling-profiler-network-primary-hover': '#e3dbc5',
-    '--color-scheduling-profiler-network-secondary': '#efc457',
-    '--color-scheduling-profiler-network-secondary-hover': '#d6af4d',
-    '--color-scheduling-profiler-priority-background': '#1d2129',
-    '--color-scheduling-profiler-priority-border': '#282c34',
-    '--color-scheduling-profiler-user-timing': '#c9cacd',
-    '--color-scheduling-profiler-user-timing-hover': '#93959a',
-    '--color-scheduling-profiler-react-idle': '#3d485b',
-    '--color-scheduling-profiler-react-idle-hover': '#465269',
-    '--color-scheduling-profiler-react-render': '#2683E2',
-    '--color-scheduling-profiler-react-render-hover': '#1a76d4',
-    '--color-scheduling-profiler-react-render-text': '#11365e',
-    '--color-scheduling-profiler-react-commit': '#731fad',
-    '--color-scheduling-profiler-react-commit-hover': '#611b94',
-    '--color-scheduling-profiler-react-commit-text': '#e5c1ff',
-    '--color-scheduling-profiler-react-layout-effects': '#611b94',
-    '--color-scheduling-profiler-react-layout-effects-hover': '#51167a',
-    '--color-scheduling-profiler-react-layout-effects-text': '#e5c1ff',
-    '--color-scheduling-profiler-react-passive-effects': '#611b94',
-    '--color-scheduling-profiler-react-passive-effects-hover': '#51167a',
-    '--color-scheduling-profiler-react-passive-effects-text': '#e5c1ff',
-    '--color-scheduling-profiler-react-schedule': '#2683E2',
-    '--color-scheduling-profiler-react-schedule-hover': '#1a76d4',
-    '--color-scheduling-profiler-react-suspense-rejected': '#f1cc14',
-    '--color-scheduling-profiler-react-suspense-rejected-hover': '#e4c00f',
-    '--color-scheduling-profiler-react-suspense-resolved': '#a6e59f',
-    '--color-scheduling-profiler-react-suspense-resolved-hover': '#89d281',
-    '--color-scheduling-profiler-react-suspense-unresolved': '#c9cacd',
-    '--color-scheduling-profiler-react-suspense-unresolved-hover': '#93959a',
-    '--color-scheduling-profiler-thrown-error': '#fb3655',
-    '--color-scheduling-profiler-thrown-error-hover': '#f82042',
-    '--color-scheduling-profiler-text-color': '#282c34',
-    '--color-scheduling-profiler-text-dim-color': '#555b66',
-    '--color-scheduling-profiler-react-work-border': '#3d424a',
+    '--color-timeline-internal-module': '#303542',
+    '--color-timeline-internal-module-hover': '#363b4a',
+    '--color-timeline-internal-module-text': '#7f8899',
+    '--color-timeline-native-event': '#b2b2b2',
+    '--color-timeline-native-event-hover': '#949494',
+    '--color-timeline-network-primary': '#fcf3dc',
+    '--color-timeline-network-primary-hover': '#e3dbc5',
+    '--color-timeline-network-secondary': '#efc457',
+    '--color-timeline-network-secondary-hover': '#d6af4d',
+    '--color-timeline-priority-background': '#1d2129',
+    '--color-timeline-priority-border': '#282c34',
+    '--color-timeline-user-timing': '#c9cacd',
+    '--color-timeline-user-timing-hover': '#93959a',
+    '--color-timeline-react-idle': '#3d485b',
+    '--color-timeline-react-idle-hover': '#465269',
+    '--color-timeline-react-render': '#2683E2',
+    '--color-timeline-react-render-hover': '#1a76d4',
+    '--color-timeline-react-render-text': '#11365e',
+    '--color-timeline-react-commit': '#731fad',
+    '--color-timeline-react-commit-hover': '#611b94',
+    '--color-timeline-react-commit-text': '#e5c1ff',
+    '--color-timeline-react-layout-effects': '#611b94',
+    '--color-timeline-react-layout-effects-hover': '#51167a',
+    '--color-timeline-react-layout-effects-text': '#e5c1ff',
+    '--color-timeline-react-passive-effects': '#611b94',
+    '--color-timeline-react-passive-effects-hover': '#51167a',
+    '--color-timeline-react-passive-effects-text': '#e5c1ff',
+    '--color-timeline-react-schedule': '#2683E2',
+    '--color-timeline-react-schedule-hover': '#1a76d4',
+    '--color-timeline-react-suspense-rejected': '#f1cc14',
+    '--color-timeline-react-suspense-rejected-hover': '#e4c00f',
+    '--color-timeline-react-suspense-resolved': '#a6e59f',
+    '--color-timeline-react-suspense-resolved-hover': '#89d281',
+    '--color-timeline-react-suspense-unresolved': '#c9cacd',
+    '--color-timeline-react-suspense-unresolved-hover': '#93959a',
+    '--color-timeline-thrown-error': '#fb3655',
+    '--color-timeline-thrown-error-hover': '#f82042',
+    '--color-timeline-text-color': '#282c34',
+    '--color-timeline-text-dim-color': '#555b66',
+    '--color-timeline-react-work-border': '#3d424a',
     '--color-search-match': 'yellow',
     '--color-search-match-current': '#f7923b',
     '--color-selected-tree-highlight-active': 'rgba(23, 143, 185, 0.15)',
@@ -85748,8 +85752,8 @@ function getHookName(hook, originalSourceAST, originalSourceCode, originalSource
     // and just fail if we find more than one match.
     const matchingNodes = hooksFromAST.filter(node => {
       const nodeLocationCheck = checkNodeLocation(node, originalSourceLineNumber);
-      const hookDeclaractionCheck = isConfirmedHookDeclaration(node);
-      return nodeLocationCheck && hookDeclaractionCheck;
+      const hookDeclarationCheck = isConfirmedHookDeclaration(node);
+      return nodeLocationCheck && hookDeclarationCheck;
     });
 
     if (matchingNodes.length === 1) {
@@ -85758,8 +85762,8 @@ function getHookName(hook, originalSourceAST, originalSourceCode, originalSource
   } else {
     potentialReactHookASTNode = hooksFromAST.find(node => {
       const nodeLocationCheck = checkNodeLocation(node, originalSourceLineNumber, originalSourceColumnNumber);
-      const hookDeclaractionCheck = isConfirmedHookDeclaration(node);
-      return nodeLocationCheck && hookDeclaractionCheck;
+      const hookDeclarationCheck = isConfirmedHookDeclaration(node);
+      return nodeLocationCheck && hookDeclarationCheck;
     });
   }
 
@@ -85976,7 +85980,7 @@ function getHookNamesMappingFromAST(sourceAST) {
           // If it doesn't, we immediately use the declared variable name
           // as the Hook name. We do this because for any other Hooks that
           // aren't the built-in Hooks that return a tuple, we can't reliably
-          // extract a Hook name from other variable declartions derived from
+          // extract a Hook name from other variable declarations derived from
           // this one, since we don't know which of the declared variables
           // are the relevant ones to track and show in dev tools.
 
@@ -86035,7 +86039,7 @@ function getHookNamesMappingFromAST(sourceAST) {
                   {
                     // When encountering a MemberExpression inside the new
                     // variable declaration, we only want to extract the variable
-                    // name if we're assinging the value of the first member,
+                    // name if we're assigning the value of the first member,
                     // which is handled by `filterMemberWithHookVariableName`.
                     // E.g.
                     //    const countState = useState(0);
@@ -86189,7 +86193,7 @@ function assertCallExpression(node) {
 
   return node;
 }
-// EXTERNAL MODULE: /Users/jstejada/code/jstejada-react/node_modules/error-stack-parser/error-stack-parser.js
+// EXTERNAL MODULE: /Users/luna/code/react/node_modules/error-stack-parser/error-stack-parser.js
 var error_stack_parser = __webpack_require__(128);
 var error_stack_parser_default = /*#__PURE__*/__webpack_require__.n(error_stack_parser);
 
@@ -86243,11 +86247,12 @@ function areSourceMapsAppliedToErrors() {
  * It should never be imported directly!
  * It should always be imported from "react-devtools-feature-flags".
  ************************************************************************/
-const enableProfilerChangedHookIndices = true;
-const isInternalFacebookBuild = false;
-const enableNamedHooksFeature = true;
-const enableLogger = false;
 const consoleManagedByDevToolsDuringStrictMode = true;
+const enableLogger = false;
+const enableNamedHooksFeature = true;
+const enableProfilerChangedHookIndices = true;
+const enableStyleXFeatures = false;
+const isInternalFacebookBuild = false;
 /************************************************************************
  * Do not edit the code below.
  * It ensures this fork exports the same types as the default flags file.
@@ -86337,7 +86342,7 @@ function loadHookNames(element, hooksTree, loadHookNamesFunction, fetchFileWithC
         callbacks.add(callback);
       },
 
-      // Optional property used by Scheduling Profiler:
+      // Optional property used by Timeline:
       displayName: `Loading hook names for ${element.displayName || 'Unknown'}`
     };
     let timeoutID;
@@ -86450,10 +86455,10 @@ function getHookSourceLocationKey({
 function clearHookNamesCache() {
   hookNamesCache_map = new WeakMap();
 }
-// EXTERNAL MODULE: /Users/jstejada/code/jstejada-react/node_modules/source-map-js/lib/util.js
+// EXTERNAL MODULE: /Users/luna/code/react/node_modules/source-map-js/lib/util.js
 var util = __webpack_require__(22);
 
-// CONCATENATED MODULE: /Users/jstejada/code/jstejada-react/node_modules/sourcemap-codec/dist/sourcemap-codec.es.js
+// CONCATENATED MODULE: /Users/luna/code/react/node_modules/sourcemap-codec/dist/sourcemap-codec.es.js
 var charToInteger = {};
 var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
@@ -87687,7 +87692,7 @@ function purgeCachedMetadata() {
   originalURLToMetadataCache.reset();
   runtimeURLToMetadataCache.reset();
 }
-// CONCATENATED MODULE: /Users/jstejada/code/jstejada-react/node_modules/workerize-loader/dist/rpc-worker-loader.js!/Users/jstejada/code/jstejada-react/node_modules/babel-loader/lib??ref--2-1!/Users/jstejada/code/jstejada-react/node_modules/babel-loader/lib??ref--3!../react-devtools-shared/src/hooks/parseHookNames/parseSourceAndMetadata.worker.js
+// CONCATENATED MODULE: /Users/luna/code/react/node_modules/workerize-loader/dist/rpc-worker-loader.js!/Users/luna/code/react/node_modules/babel-loader/lib??ref--2-1!/Users/luna/code/react/node_modules/babel-loader/lib??ref--3!../react-devtools-shared/src/hooks/parseHookNames/parseSourceAndMetadata.worker.js
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
