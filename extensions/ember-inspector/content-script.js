@@ -83,21 +83,18 @@
     };
   }
 
-  /**
-   * Gather the iframes running in the ClientApp
-   */
-  var iframes = document.getElementsByTagName('iframe');
-  var urls = [];
-  for (var i = 0, l = iframes.length; i < l; i++) {
-    urls.push(iframes[i].src);
-  }
+  let injected = false;
 
-  /**
-   * Send the iframes to EmberInspector so that it can run
-   * EmberDebug in the context of the iframe.
-   */
-  //FIX ME
-  setTimeout(function() {
-    chrome.runtime.sendMessage({type: 'iframes', urls: urls});
-  }, 500);
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message?.type === 'inject-ember-debug') {
+      if (!injected) {
+        // cannot use eval here, as the context is limited to the content script-
+        const elem = document.createElement('script') ;
+        elem.textContent = message.value;
+        document.head.appendChild(elem) ;
+        injected = true;
+      }
+    }
+  });
+  chrome.runtime.sendMessage('ember-content-script-ready');
 })();

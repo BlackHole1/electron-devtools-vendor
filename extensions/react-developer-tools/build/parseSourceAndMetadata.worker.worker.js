@@ -34703,7 +34703,7 @@ Object.defineProperty(exports, '__esModule', {
 exports.default = testErrorStack;
 exports.SOURCE_STACK_FRAME_LINE_NUMBER = void 0;
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -85188,13 +85188,13 @@ __webpack_require__.d(__webpack_exports__, "purgeCachedMetadata", function() { r
 // EXTERNAL MODULE: ../react-devtools-shared/node_modules/@babel/parser/lib/index.js
 var lib = __webpack_require__(62);
 
-// EXTERNAL MODULE: /Users/luna/code/react/node_modules/lru-cache/index.js
+// EXTERNAL MODULE: /Users/mengdi/workspace/git/react-release/node_modules/lru-cache/index.js
 var lru_cache = __webpack_require__(63);
 var lru_cache_default = /*#__PURE__*/__webpack_require__.n(lru_cache);
 
 // CONCATENATED MODULE: ../react-devtools-shared/src/constants.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -85218,14 +85218,15 @@ const TREE_OPERATION_SET_SUBTREE_MODE = 7;
 const PROFILING_FLAG_BASIC_SUPPORT = 0b01;
 const PROFILING_FLAG_TIMELINE_SUPPORT = 0b10;
 const LOCAL_STORAGE_DEFAULT_TAB_KEY = 'React::DevTools::defaultTab';
-const LOCAL_STORAGE_FILTER_PREFERENCES_KEY = 'React::DevTools::componentFilters';
+const LOCAL_STORAGE_COMPONENT_FILTER_PREFERENCES_KEY = 'React::DevTools::componentFilters';
 const SESSION_STORAGE_LAST_SELECTION_KEY = 'React::DevTools::lastSelection';
 const LOCAL_STORAGE_OPEN_IN_EDITOR_URL = 'React::DevTools::openInEditorUrl';
 const LOCAL_STORAGE_PARSE_HOOK_NAMES_KEY = 'React::DevTools::parseHookNames';
 const SESSION_STORAGE_RECORD_CHANGE_DESCRIPTIONS_KEY = 'React::DevTools::recordChangeDescriptions';
 const SESSION_STORAGE_RELOAD_AND_PROFILE_KEY = 'React::DevTools::reloadAndProfile';
 const LOCAL_STORAGE_SHOULD_BREAK_ON_CONSOLE_ERRORS = 'React::DevTools::breakOnConsoleErrors';
-const LOCAL_STORAGE_SHOULD_PATCH_CONSOLE_KEY = 'React::DevTools::appendComponentStack';
+const LOCAL_STORAGE_BROWSER_THEME = 'React::DevTools::theme';
+const LOCAL_STORAGE_SHOULD_APPEND_COMPONENT_STACK_KEY = 'React::DevTools::appendComponentStack';
 const LOCAL_STORAGE_SHOW_INLINE_WARNINGS_AND_ERRORS_KEY = 'React::DevTools::showInlineWarningsAndErrors';
 const LOCAL_STORAGE_TRACE_UPDATES_ENABLED_KEY = 'React::DevTools::traceUpdatesEnabled';
 const LOCAL_STORAGE_HIDE_CONSOLE_LOGS_IN_STRICT_MODE = 'React::DevTools::hideConsoleLogsInStrictMode';
@@ -85549,7 +85550,7 @@ const COMPACT_LINE_HEIGHT = parseInt(THEME_STYLES.compact['--line-height-data'],
 
 // CONCATENATED MODULE: ../react-devtools-shared/src/PerformanceLoggingUtils.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -85557,8 +85558,11 @@ const COMPACT_LINE_HEIGHT = parseInt(THEME_STYLES.compact['--line-height-data'],
  * 
  */
 
-const supportsUserTiming = typeof performance !== 'undefined' && typeof performance.mark === 'function' && typeof performance.clearMarks === 'function';
-const supportsPerformanceNow = typeof performance !== 'undefined' && typeof performance.now === 'function';
+const supportsUserTiming = typeof performance !== 'undefined' && // $FlowFixMe[method-unbinding]
+typeof performance.mark === 'function' && // $FlowFixMe[method-unbinding]
+typeof performance.clearMarks === 'function';
+const supportsPerformanceNow = // $FlowFixMe[method-unbinding]
+typeof performance !== 'undefined' && typeof performance.now === 'function';
 
 function mark(markName) {
   if (supportsUserTiming) {
@@ -85647,19 +85651,15 @@ function withCallbackPerfMeasurements(markName, callback, onComplete) {
 var traverse_lib = __webpack_require__(18);
 var traverse_lib_default = /*#__PURE__*/__webpack_require__.n(traverse_lib);
 
-// EXTERNAL MODULE: ../react-devtools-shared/node_modules/@babel/types/lib/index.js
-var types_lib = __webpack_require__(0);
-
 // CONCATENATED MODULE: ../react-devtools-shared/src/hooks/astUtils.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
  * 
  */
-
 
 
 const NO_HOOK_NAME = '<no-hook>';
@@ -86193,7 +86193,7 @@ function assertCallExpression(node) {
 
   return node;
 }
-// EXTERNAL MODULE: /Users/luna/code/react/node_modules/error-stack-parser/error-stack-parser.js
+// EXTERNAL MODULE: /Users/mengdi/workspace/git/react-release/node_modules/error-stack-parser/error-stack-parser.js
 var error_stack_parser = __webpack_require__(128);
 var error_stack_parser_default = /*#__PURE__*/__webpack_require__.n(error_stack_parser);
 
@@ -86203,7 +86203,7 @@ var ErrorTesterCompiled_default = /*#__PURE__*/__webpack_require__.n(ErrorTester
 
 // CONCATENATED MODULE: ../react-devtools-shared/src/hooks/ErrorTester.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -86234,7 +86234,7 @@ function areSourceMapsAppliedToErrors() {
 }
 // CONCATENATED MODULE: ../react-devtools-shared/src/config/DevToolsFeatureFlags.extension-oss.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -86253,16 +86253,17 @@ const enableNamedHooksFeature = true;
 const enableProfilerChangedHookIndices = true;
 const enableStyleXFeatures = false;
 const isInternalFacebookBuild = false;
+const enableProfilerComponentTree = true;
 /************************************************************************
  * Do not edit the code below.
  * It ensures this fork exports the same types as the default flags file.
  ************************************************************************/
 
-// eslint-disable-next-line no-unused-expressions
+// Flow magic to verify the exports of this file match the original version.
 null;
 // CONCATENATED MODULE: ../react-devtools-shared/src/Logger.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -86290,7 +86291,7 @@ const Logger_registerEventLogger = enableLogger === true ? function registerEven
 };
 // CONCATENATED MODULE: ../react-devtools-shared/src/hookNamesCache.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -86455,10 +86456,10 @@ function getHookSourceLocationKey({
 function clearHookNamesCache() {
   hookNamesCache_map = new WeakMap();
 }
-// EXTERNAL MODULE: /Users/luna/code/react/node_modules/source-map-js/lib/util.js
+// EXTERNAL MODULE: /Users/mengdi/workspace/git/react-release/node_modules/source-map-js/lib/util.js
 var util = __webpack_require__(22);
 
-// CONCATENATED MODULE: /Users/luna/code/react/node_modules/sourcemap-codec/dist/sourcemap-codec.es.js
+// CONCATENATED MODULE: /Users/mengdi/workspace/git/react-release/node_modules/sourcemap-codec/dist/sourcemap-codec.es.js
 var charToInteger = {};
 var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
@@ -86596,7 +86597,7 @@ function encodeInteger(num) {
 
 // CONCATENATED MODULE: ../react-devtools-shared/src/hooks/generateHookMap.js
 /*
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -86604,8 +86605,7 @@ function encodeInteger(num) {
  * 
  */
 
-
-
+ // Missing types in @babel/types
 
 /**
  * Given a parsed source code AST, returns a "Hook Map", which is a
@@ -86703,7 +86703,7 @@ function decodeHookMap(encodedHookMap) {
 }
 // CONCATENATED MODULE: ../react-devtools-shared/src/hooks/getHookNameForLocation.js
 /*
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -86993,7 +86993,7 @@ function getHookNameIndexFromEntry(entry) {
 }
 // CONCATENATED MODULE: ../react-devtools-shared/src/hooks/SourceMapMetadataConsumer.js
 /*
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -87186,7 +87186,7 @@ class SourceMapMetadataConsumer_SourceMapMetadataConsumer {
 }
 // CONCATENATED MODULE: ../react-devtools-shared/src/hooks/SourceMapConsumer.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -87377,6 +87377,7 @@ function IndexedSourceMapConsumer(sourceMapJSON) {
 
     if (section.sourceMapConsumer === null) {
       // Lazily parse the section only when it's needed.
+      // $FlowFixMe[invalid-constructor] Flow no longer supports calling new on functions
       section.sourceMapConsumer = new SourceMapConsumer(section.map);
     }
 
@@ -87392,7 +87393,7 @@ function IndexedSourceMapConsumer(sourceMapJSON) {
 }
 // CONCATENATED MODULE: ../react-devtools-shared/src/hooks/parseHookNames/parseSourceAndMetadata.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -87692,9 +87693,9 @@ function purgeCachedMetadata() {
   originalURLToMetadataCache.reset();
   runtimeURLToMetadataCache.reset();
 }
-// CONCATENATED MODULE: /Users/luna/code/react/node_modules/workerize-loader/dist/rpc-worker-loader.js!/Users/luna/code/react/node_modules/babel-loader/lib??ref--2-1!/Users/luna/code/react/node_modules/babel-loader/lib??ref--3!../react-devtools-shared/src/hooks/parseHookNames/parseSourceAndMetadata.worker.js
+// CONCATENATED MODULE: /Users/mengdi/workspace/git/react-release/node_modules/workerize-loader/dist/rpc-worker-loader.js!/Users/mengdi/workspace/git/react-release/node_modules/babel-loader/lib??ref--2-1!/Users/mengdi/workspace/git/react-release/node_modules/babel-loader/lib??ref--3!../react-devtools-shared/src/hooks/parseHookNames/parseSourceAndMetadata.worker.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.

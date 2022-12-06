@@ -6,4 +6,4 @@
  */
 var panelWindow, injectedPanel = false, injectedPage = false, panelVisible = false, savedStack = [];
 
-chrome.devtools.panels.create("Ember", "panes-3-4-0/assets/svg/ember-icon.svg", "panes-3-4-0/index.html");
+chrome.devtools.panels.create("Ember", "panes-3-16-0/assets/svg/ember-icon.svg", "panes-3-16-0/index.html");

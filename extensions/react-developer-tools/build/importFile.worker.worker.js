@@ -3335,12 +3335,12 @@ __webpack_require__.d(__webpack_exports__, "importFile", function() { return /* 
 // EXTERNAL MODULE: ../react-devtools-timeline/node_modules/regenerator-runtime/runtime.js
 var runtime = __webpack_require__(5);
 
-// EXTERNAL MODULE: /Users/luna/code/react/node_modules/@elg/speedscope/dist/library/library.js
+// EXTERNAL MODULE: /Users/mengdi/workspace/git/react-release/node_modules/@elg/speedscope/dist/library/library.js
 var library = __webpack_require__(1);
 
 // CONCATENATED MODULE: ../react-devtools-shared/src/constants.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -3364,14 +3364,15 @@ const TREE_OPERATION_SET_SUBTREE_MODE = 7;
 const PROFILING_FLAG_BASIC_SUPPORT = 0b01;
 const PROFILING_FLAG_TIMELINE_SUPPORT = 0b10;
 const LOCAL_STORAGE_DEFAULT_TAB_KEY = 'React::DevTools::defaultTab';
-const LOCAL_STORAGE_FILTER_PREFERENCES_KEY = 'React::DevTools::componentFilters';
+const LOCAL_STORAGE_COMPONENT_FILTER_PREFERENCES_KEY = 'React::DevTools::componentFilters';
 const SESSION_STORAGE_LAST_SELECTION_KEY = 'React::DevTools::lastSelection';
 const LOCAL_STORAGE_OPEN_IN_EDITOR_URL = 'React::DevTools::openInEditorUrl';
 const LOCAL_STORAGE_PARSE_HOOK_NAMES_KEY = 'React::DevTools::parseHookNames';
 const SESSION_STORAGE_RECORD_CHANGE_DESCRIPTIONS_KEY = 'React::DevTools::recordChangeDescriptions';
 const SESSION_STORAGE_RELOAD_AND_PROFILE_KEY = 'React::DevTools::reloadAndProfile';
 const LOCAL_STORAGE_SHOULD_BREAK_ON_CONSOLE_ERRORS = 'React::DevTools::breakOnConsoleErrors';
-const LOCAL_STORAGE_SHOULD_PATCH_CONSOLE_KEY = 'React::DevTools::appendComponentStack';
+const LOCAL_STORAGE_BROWSER_THEME = 'React::DevTools::theme';
+const LOCAL_STORAGE_SHOULD_APPEND_COMPONENT_STACK_KEY = 'React::DevTools::appendComponentStack';
 const LOCAL_STORAGE_SHOW_INLINE_WARNINGS_AND_ERRORS_KEY = 'React::DevTools::showInlineWarningsAndErrors';
 const LOCAL_STORAGE_TRACE_UPDATES_ENABLED_KEY = 'React::DevTools::traceUpdatesEnabled';
 const LOCAL_STORAGE_HIDE_CONSOLE_LOGS_IN_STRICT_MODE = 'React::DevTools::hideConsoleLogsInStrictMode';
@@ -3695,7 +3696,7 @@ const COMPACT_LINE_HEIGHT = parseInt(THEME_STYLES.compact['--line-height-data'],
 
 // CONCATENATED MODULE: ../react-devtools-timeline/src/constants.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -3709,7 +3710,7 @@ const SCHEDULING_PROFILER_VERSION = 1;
 const SNAPSHOT_MAX_HEIGHT = 60;
 // CONCATENATED MODULE: ../react-devtools-timeline/src/import-worker/InvalidProfileError.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -3770,7 +3771,7 @@ function memoizeOne(resultFn, isEqual) {
 /* harmony default export */ var memoize_one_esm = (memoizeOne);
 // CONCATENATED MODULE: ../react-devtools-timeline/src/utils/getBatchRange.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -3808,13 +3809,13 @@ function unmemoizedGetBatchRange(batchUID, data, minStartTime = 0) {
 }
 
 const getBatchRange = memoize_one_esm(unmemoizedGetBatchRange);
-// EXTERNAL MODULE: /Users/luna/code/react/node_modules/error-stack-parser/error-stack-parser.js
+// EXTERNAL MODULE: /Users/mengdi/workspace/git/react-release/node_modules/error-stack-parser/error-stack-parser.js
 var error_stack_parser = __webpack_require__(3);
 var error_stack_parser_default = /*#__PURE__*/__webpack_require__.n(error_stack_parser);
 
 // CONCATENATED MODULE: ../react-devtools-timeline/src/import-worker/preprocessData.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -4525,8 +4526,11 @@ function preprocessFlamechart(rawData) {
   const profile = parsedData.profiles[0]; // TODO: Choose the main CPU thread only
 
   const speedscopeFlamechart = new library["Flamechart"]({
+    // $FlowFixMe[method-unbinding]
     getTotalWeight: profile.getTotalWeight.bind(profile),
+    // $FlowFixMe[method-unbinding]
     forEachCall: profile.forEachCall.bind(profile),
+    // $FlowFixMe[method-unbinding]
     formatValue: profile.formatValue.bind(profile),
     getColorBucketForFrame: () => 0
   });
@@ -4693,13 +4697,13 @@ async function preprocessData(timeline) {
 
   return profilerData;
 }
-// EXTERNAL MODULE: /Users/luna/code/react/node_modules/nullthrows/nullthrows.js
+// EXTERNAL MODULE: /Users/mengdi/workspace/git/react-release/node_modules/nullthrows/nullthrows.js
 var nullthrows = __webpack_require__(4);
 var nullthrows_default = /*#__PURE__*/__webpack_require__.n(nullthrows);
 
 // CONCATENATED MODULE: ../react-devtools-timeline/src/import-worker/readInputData.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -4732,7 +4736,7 @@ const readInputData = file => {
 };
 // CONCATENATED MODULE: ../react-devtools-timeline/src/import-worker/importFile.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -4771,9 +4775,9 @@ async function importFile(file) {
     }
   }
 }
-// CONCATENATED MODULE: /Users/luna/code/react/node_modules/workerize-loader/dist/rpc-worker-loader.js!/Users/luna/code/react/node_modules/babel-loader/lib??ref--2-1!/Users/luna/code/react/node_modules/babel-loader/lib??ref--3!../react-devtools-timeline/src/import-worker/importFile.worker.js
+// CONCATENATED MODULE: /Users/mengdi/workspace/git/react-release/node_modules/workerize-loader/dist/rpc-worker-loader.js!/Users/mengdi/workspace/git/react-release/node_modules/babel-loader/lib??ref--2-1!/Users/mengdi/workspace/git/react-release/node_modules/babel-loader/lib??ref--3!../react-devtools-timeline/src/import-worker/importFile.worker.js
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
