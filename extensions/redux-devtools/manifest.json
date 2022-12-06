@@ -1,5 +1,5 @@
 {
-  "version": "3.0.11",
+  "version": "3.0.15",
   "name": "Redux DevTools",
   "description": "Redux DevTools for debugging application's state changes.",
   "manifest_version": 2,

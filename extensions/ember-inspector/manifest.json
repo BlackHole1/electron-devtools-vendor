@@ -2,12 +2,12 @@
   "manifest_version": 2,
   "name": "Ember Inspector",
   "description": "Tool for debugging Ember applications.",
-  "version": "4.5.11",
+  "version": "4.9.1",
   "icons": {
-    "16": "panes-3-4-0/assets/images/icon16.png",
-    "32": "panes-3-4-0/assets/images/icon38.png",
-    "48": "panes-3-4-0/assets/images/icon48.png",
-    "128": "panes-3-4-0/assets/images/icon128.png"
+    "16": "panes-3-16-0/assets/images/icon16.png",
+    "32": "panes-3-16-0/assets/images/icon38.png",
+    "48": "panes-3-16-0/assets/images/icon48.png",
+    "128": "panes-3-16-0/assets/images/icon128.png"
   },
   "permissions": [
     "storage",
@@ -24,6 +24,7 @@
         "boot.js"
       ],
       "run_at": "document_start",
+      "match_about_blank": true,
       "all_frames": true
     },
     {
@@ -34,6 +35,7 @@
         "content-script.js"
       ],
       "run_at": "document_end",
+      "match_about_blank": true,
       "all_frames": true
     }
   ],

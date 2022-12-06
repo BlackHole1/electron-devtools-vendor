@@ -2521,7 +2521,7 @@ define("ember-debug/libs/view-inspection", ["exports", "ember-debug/utils/classi
       margin: 0px;
       padding: 0px;
       border: none;
-      z-index: 10000;
+      z-index: 1000000;
       /* https://github.com/ChromeDevTools/devtools-frontend/blob/b336f0440a8fb539352ac223ef466c3475618cf1/front_end/common/Color.js#L904 */
       background: rgba(111, 168, 220, .66);
     }
@@ -2534,7 +2534,7 @@ define("ember-debug/libs/view-inspection", ["exports", "ember-debug/utils/classi
       padding: 4px 8px;
       border: none;
       border-radius: 3px;
-      z-index: 10000;
+      z-index: 1000000;
       font-family: sans-serif;
       font-size: 12px;
       font-weight: normal;
@@ -2856,11 +2856,11 @@ define("ember-debug/libs/view-inspection", ["exports", "ember-debug/utils/classi
         this.currentId = id;
         this.didShow(id, pin);
       } else {
-        this.hide(false);
+        this.hide();
       }
     }
 
-    hide(notify = true) {
+    hide(notify = false) {
       let {
         isShowing,
         isPinned,
@@ -3743,8 +3743,7 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
     CoreObject,
     MutableEnumerable,
     NativeArray,
-    ObjectProxy,
-    TargetActionSupport
+    ObjectProxy
   } = _ember.default;
 
   const GlimmerComponent = (() => {
@@ -3789,7 +3788,11 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
    * Add Known Ember Mixins and Classes so we can label them correctly in the inspector
    */
 
-  const emberNames = new Map([[_evented.default, 'Evented Mixin'], [_promiseProxyMixin.default, 'PromiseProxy Mixin'], [_mutable.default, 'MutableArray Mixin'], [MutableEnumerable, 'MutableEnumerable Mixin'], [NativeArray, 'NativeArray Mixin'], [_observable.default, 'Observable Mixin'], [ControllerMixin, 'Controller Mixin'], [TargetActionSupport, 'TargetActionSupport Mixin'], [ActionHandler, 'ActionHandler Mixin'], [CoreObject, 'CoreObject'], [_object.default, 'EmberObject'], [_component.default, 'Component']]);
+  const emberNames = new Map([[_evented.default, 'Evented Mixin'], [_promiseProxyMixin.default, 'PromiseProxy Mixin'], [_mutable.default, 'MutableArray Mixin'], [MutableEnumerable, 'MutableEnumerable Mixin'], [NativeArray, 'NativeArray Mixin'], [_observable.default, 'Observable Mixin'], [ControllerMixin, 'Controller Mixin'], [ActionHandler, 'ActionHandler Mixin'], [CoreObject, 'CoreObject'], [_object.default, 'EmberObject'], [_component.default, 'Component']]);
+
+  if ((0, _version.compareVersion)(VERSION, '3.27.0') === -1) {
+    emberNames.set(_ember.default.TargetActionSupport, 'TargetActionSupport Mixin');
+  }
 
   try {
     const Views = _ember.default.__loader.require('@ember/-internals/views');
@@ -4507,7 +4510,7 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
         constructor
       } = object;
 
-      if (constructor.toString && constructor.toString !== Object.prototype.toString) {
+      if (constructor.toString && constructor.toString !== Object.prototype.toString && constructor.toString !== Function.prototype.toString) {
         name = constructor.toString();
       } else {
         name = constructor.name;
@@ -4524,7 +4527,7 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
       return name.replace(/<.*:/, `<${className}:`);
     }
 
-    return name || className;
+    return name || className || '(unknown class)';
   }
 
   function ownMixins(object) {
@@ -9867,7 +9870,7 @@ if (typeof env !== 'undefined') {
 }
 
 // @formatter:off
-var EMBER_VERSIONS_SUPPORTED = ['3.4.0',''];
+var EMBER_VERSIONS_SUPPORTED = ['3.4.0','3.16.0'];
 // @formatter:on
 
 (function(adapter) {
@@ -9931,7 +9934,7 @@ var EMBER_VERSIONS_SUPPORTED = ['3.4.0',''];
           });
 
           if (!window.EmberInspector._application) {
-            bootEmberInspector(instance);
+            setTimeout(() => bootEmberInspector(instance), 0);
           }
         }
       });
@@ -9976,7 +9979,9 @@ var EMBER_VERSIONS_SUPPORTED = ['3.4.0',''];
     };
 
     // Newest Ember versions >= 1.10
-    window.addEventListener('Ember', triggerOnce, { once: true });
+   
+    const later = () => setTimeout(triggerOnce, 0);
+    window.addEventListener('Ember', later, { once: true });
     // Oldest Ember versions or if this was injected after Ember has loaded.
     onReady(triggerOnce);
   }
@@ -10010,20 +10015,41 @@ var EMBER_VERSIONS_SUPPORTED = ['3.4.0',''];
 
     sendApps(adapterInstance, apps);
 
+    function loadInstance(app) {
+      let instance = app.__deprecatedInstance__ || (app._applicationInstances && app._applicationInstances[0]);
+      if (instance) {
+        // App started
+        setupInstanceInitializer(app, callback);
+        callback(instance);
+        return true
+      }
+    }
+
     var app;
     for (var i = 0, l = apps.length; i < l; i++) {
       app = apps[i];
       // We check for the existance of an application instance because
       // in Ember > 3 tests don't destroy the app when they're done but the app has no booted instances.
       if (app._readinessDeferrals === 0) {
-        let instance = app.__deprecatedInstance__ || (app._applicationInstances && app._applicationInstances[0]);
-        if (instance) {
-          // App started
-          setupInstanceInitializer(app, callback);
-          callback(instance);
+        if (loadInstance(app)) {
           break;
         }
       }
+
+      // app already run initializers, but no instance, use _bootPromise and didBecomeReady
+      if(app._bootPromise) {
+        app._bootPromise.then((app) => {
+          loadInstance(app);
+        });
+      }
+
+      app.reopen({
+        didBecomeReady() {
+          this._super.apply(this, arguments);
+          setTimeout(() => loadInstance(app), 0)
+        }
+      });
+
     }
     Ember.Application.initializer({
       name: 'ember-inspector-booted',

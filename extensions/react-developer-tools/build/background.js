@@ -81,20 +81,44 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 115);
+/******/ 	return __webpack_require__(__webpack_require__.s = 117);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 115:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 117:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(33);
 /* global chrome */
 
 
+
 const ports = {};
-const IS_FIREFOX = navigator.userAgent.indexOf('Firefox') >= 0;
+
+if (!_utils__WEBPACK_IMPORTED_MODULE_0__[/* IS_FIREFOX */ "a"]) {
+  // Manifest V3 method of injecting content scripts (not yet supported in Firefox)
+  // Note: the "world" option in registerContentScripts is only available in Chrome v102+
+  // It's critical since it allows us to directly run scripts on the "main" world on the page
+  // "document_start" allows it to run before the page's scripts
+  // so the hook can be detected by react reconciler
+  chrome.scripting.registerContentScripts([{
+    id: 'hook',
+    matches: ['<all_urls>'],
+    js: ['build/installHook.js'],
+    runAt: 'document_start',
+    world: chrome.scripting.ExecutionWorld.MAIN
+  }, {
+    id: 'renderer',
+    matches: ['<all_urls>'],
+    js: ['build/renderer.js'],
+    runAt: 'document_start',
+    world: chrome.scripting.ExecutionWorld.MAIN
+  }]);
+}
+
 chrome.runtime.onConnect.addListener(function (port) {
   let tab = null;
   let name = null;
@@ -102,7 +126,7 @@ chrome.runtime.onConnect.addListener(function (port) {
   if (isNumeric(port.name)) {
     tab = port.name;
     name = 'devtools';
-    installContentScript(+port.name);
+    installProxy(+port.name);
   } else {
     tab = port.sender.tab.id;
     name = 'content-script';
@@ -126,10 +150,19 @@ function isNumeric(str) {
   return +str + '' === str;
 }
 
-function installContentScript(tabId) {
-  chrome.tabs.executeScript(tabId, {
-    file: '/build/contentScript.js'
-  }, function () {});
+function installProxy(tabId) {
+  if (_utils__WEBPACK_IMPORTED_MODULE_0__[/* IS_FIREFOX */ "a"]) {
+    chrome.tabs.executeScript(tabId, {
+      file: '/build/proxy.js'
+    }, function () {});
+  } else {
+    chrome.scripting.executeScript({
+      target: {
+        tabId: tabId
+      },
+      files: ['/build/proxy.js']
+    });
+  }
 }
 
 function doublePipe(one, two) {
@@ -157,18 +190,19 @@ function doublePipe(one, two) {
 }
 
 function setIconAndPopup(reactBuildType, tabId) {
-  chrome.browserAction.setIcon({
+  const action = _utils__WEBPACK_IMPORTED_MODULE_0__[/* IS_FIREFOX */ "a"] ? chrome.browserAction : chrome.action;
+  action.setIcon({
     tabId: tabId,
     path: {
-      '16': 'icons/16-' + reactBuildType + '.png',
-      '32': 'icons/32-' + reactBuildType + '.png',
-      '48': 'icons/48-' + reactBuildType + '.png',
-      '128': 'icons/128-' + reactBuildType + '.png'
+      '16': chrome.runtime.getURL(`icons/16-${reactBuildType}.png`),
+      '32': chrome.runtime.getURL(`icons/32-${reactBuildType}.png`),
+      '48': chrome.runtime.getURL(`icons/48-${reactBuildType}.png`),
+      '128': chrome.runtime.getURL(`icons/128-${reactBuildType}.png`)
     }
   });
-  chrome.browserAction.setPopup({
+  action.setPopup({
     tabId: tabId,
-    popup: 'popups/' + reactBuildType + '.html'
+    popup: chrome.runtime.getURL(`popups/${reactBuildType}.html`)
   });
 }
 
@@ -186,14 +220,14 @@ function checkAndHandleRestrictedPageIfSo(tab) {
 // TODO: Show a different popup page(to reload current page probably) for old tabs, opened before the extension is installed
 
 
-if (!IS_FIREFOX) {
+if (!_utils__WEBPACK_IMPORTED_MODULE_0__[/* IS_FIREFOX */ "a"]) {
   chrome.tabs.query({}, tabs => tabs.forEach(checkAndHandleRestrictedPageIfSo));
   chrome.tabs.onCreated.addListener((tabId, changeInfo, tab) => checkAndHandleRestrictedPageIfSo(tab));
 } // Listen to URL changes on the active tab and update the DevTools icon.
 
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (IS_FIREFOX) {
+  if (_utils__WEBPACK_IMPORTED_MODULE_0__[/* IS_FIREFOX */ "a"]) {
     // We don't properly detect protected URLs in Firefox at the moment.
     // However we can reset the DevTools icon to its loading state when the URL changes.
     // It will be updated to the correct icon by the onMessage callback below.
@@ -217,9 +251,6 @@ chrome.runtime.onMessage.addListener((request, sender) => {
     // It tells us a renderer has attached.
 
     if (request.hasDetectedReact) {
-      // We use browserAction instead of pageAction because this lets us
-      // display a custom default popup when React is *not* detected.
-      // It is specified in the manifest.
       setIconAndPopup(request.reactBuildType, id);
     } else {
       switch ((_request$payload = request.payload) === null || _request$payload === void 0 ? void 0 : _request$payload.type) {
@@ -237,6 +268,56 @@ chrome.runtime.onMessage.addListener((request, sender) => {
     }
   }
 });
+
+/***/ }),
+
+/***/ 33:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export IS_EDGE */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return IS_FIREFOX; });
+/* unused harmony export IS_CHROME */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return getBrowserName; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return getBrowserTheme; });
+/* global chrome */
+const IS_EDGE = navigator.userAgent.indexOf('Edg') >= 0;
+const IS_FIREFOX = navigator.userAgent.indexOf('Firefox') >= 0;
+const IS_CHROME = IS_EDGE === false && IS_FIREFOX === false;
+function getBrowserName() {
+  if (IS_EDGE) {
+    return 'Edge';
+  }
+
+  if (IS_FIREFOX) {
+    return 'Firefox';
+  }
+
+  if (IS_CHROME) {
+    return 'Chrome';
+  }
+
+  throw new Error('Expected browser name to be one of Chrome, Edge or Firefox.');
+}
+function getBrowserTheme() {
+  if (IS_CHROME) {
+    // chrome.devtools.panels added in Chrome 18.
+    // chrome.devtools.panels.themeName added in Chrome 54.
+    return chrome.devtools.panels.themeName === 'dark' ? 'dark' : 'light';
+  } else {
+    // chrome.devtools.panels.themeName added in Firefox 55.
+    // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/devtools.panels/themeName
+    if (chrome.devtools && chrome.devtools.panels) {
+      switch (chrome.devtools.panels.themeName) {
+        case 'dark':
+          return 'dark';
+
+        default:
+          return 'light';
+      }
+    }
+  }
+}
 
 /***/ })
 
