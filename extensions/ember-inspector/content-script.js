@@ -1,10 +1,10 @@
 /* global chrome*/
 
 /**
- * Content script injected into the app page by chrome, works in tandem with the
- * background-script to coordinate messaging between EmberDebug, EmberInspector and the
+ * Content script injected into the app page by chrome, works in tandem with
+ * background.js to coordinate messaging between EmberDebug, EmberInspector and the
  * ClientApp.  The content-script serves as a proxy between EmberDebug
- * and the background-script.
+ * and background.js.
  *
  * Content scripts are loaded into every page, and have access to the DOM.  This uses that
  * to inject the in-page-script to determine the ClientApp version onLoad.
@@ -18,7 +18,7 @@
    * that proxies between the content-script and EmberDebug using a MessagingChannel.
    *
    * All events from the window are filtered by checking that data and data.type
-   * properties exist before sending messages on to the background-script.
+   * properties exist before sending messages on to the background script.
    *
    * See:
    *     https://developer.mozilla.org/en-US/docs/Web/API/Channel_Messaging_API
@@ -38,7 +38,7 @@
    * @param {Object} emberDebugPort
    */
   function listenToEmberDebugPort(emberDebugPort) {
-    // listen for messages from EmberDebug, and pass them on to the background-script
+    // listen for messages from EmberDebug, and pass them on to the background script
     emberDebugPort.addEventListener('message', function(event) {
       chrome.runtime.sendMessage(event.data);
     });
@@ -76,10 +76,10 @@
   var script = document.createElement('script');
   script.type = "text/javascript";
   script.src = chrome.runtime.getURL("scripts/in-page-script.js");
-  if (document.body && document.contentType !== "application/pdf") {
-    document.body.appendChild(script);
+  if (document.head && document.contentType !== "application/pdf") {
+    document.head.appendChild(script);
     script.onload = function() {
-      document.body.removeChild(script);
+      document.head.removeChild(script);
     };
   }
 
@@ -90,7 +90,7 @@
       if (!injected) {
         // cannot use eval here, as the context is limited to the content script-
         const elem = document.createElement('script') ;
-        elem.textContent = message.value;
+        elem.src = message.value;
         document.head.appendChild(elem) ;
         injected = true;
       }
