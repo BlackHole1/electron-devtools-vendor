@@ -5914,7 +5914,7 @@ exports.getInstanceDetails = getInstanceDetails;
 
 function getInstanceState(instance) {
   const mergedType = resolveMergedOptions(instance);
-  return processProps(instance).concat(processState(instance), processSetupState(instance), processComputed(instance, mergedType), processAttrs(instance), processProvide(instance), processInject(instance, mergedType), processRefs(instance));
+  return processProps(instance).concat(processState(instance), processSetupState(instance), processComputed(instance, mergedType), processAttrs(instance), processProvide(instance), processInject(instance, mergedType), processRefs(instance), processEventListeners(instance));
 }
 /**
  * Process the props of an instance.
@@ -5998,7 +5998,7 @@ function processState(instance) {
 
 function processSetupState(instance) {
   const raw = instance.devtoolsRawSetupState || {};
-  return Object.keys(instance.setupState).filter(key => !vueBuiltins.includes(key) && !key.startsWith('use')).map(key => {
+  return Object.keys(instance.setupState).filter(key => !vueBuiltins.includes(key) && key.split(/(?=[A-Z])/)[0] !== 'use').map(key => {
     var _a, _b, _c, _d;
 
     const value = (0, util_2.returnError)(() => toRaw(instance.setupState[key]));
@@ -6182,7 +6182,7 @@ function processInject(instance, mergedType) {
   }) => ({
     type: 'injected',
     key: originalKey && key !== originalKey ? `${originalKey.toString()} ➞ ${key.toString()}` : key.toString(),
-    value: (0, util_2.returnError)(() => instance.ctx[key] || instance.provides[originalKey] || defaultValue)
+    value: (0, util_2.returnError)(() => instance.ctx.hasOwnProperty(key) ? instance.ctx[key] : instance.provides.hasOwnProperty(originalKey) ? instance.provides[originalKey] : defaultValue)
   }));
 }
 
@@ -6192,6 +6192,36 @@ function processRefs(instance) {
     key,
     value: (0, util_2.returnError)(() => instance.refs[key])
   }));
+}
+
+function processEventListeners(instance) {
+  var _a;
+
+  const emitsDefinition = instance.type.emits;
+  const declaredEmits = Array.isArray(emitsDefinition) ? emitsDefinition : Object.keys(emitsDefinition !== null && emitsDefinition !== void 0 ? emitsDefinition : {});
+  const keys = Object.keys((_a = instance.vnode.props) !== null && _a !== void 0 ? _a : {});
+  const result = [];
+
+  for (const key of keys) {
+    const [prefix, ...eventNameParts] = key.split(/(?=[A-Z])/);
+
+    if (prefix === 'on') {
+      const eventName = eventNameParts.join('-').toLowerCase();
+      const isDeclared = declaredEmits.includes(eventName);
+      result.push({
+        type: 'event listeners',
+        key: eventName,
+        value: {
+          _custom: {
+            display: isDeclared ? '✅ Declared' : '⚠️ Not declared',
+            tooltip: !isDeclared ? `The event <code>${eventName}</code> is not declared in the <code>emits</code> option. It will leak into the component's attributes (<code>$attrs</code>).` : null
+          }
+        }
+      });
+    }
+  }
+
+  return result;
 }
 
 function editState({
@@ -6852,6 +6882,12 @@ function getInstanceName(instance) {
     if (instance.appContext.components[key] === instance.type) return saveComponentName(instance, key);
   }
 
+  const fileName = getComponentFileName(instance.type || {});
+
+  if (fileName) {
+    return fileName;
+  }
+
   return 'Anonymous Component';
 }
 
@@ -6863,12 +6899,10 @@ function saveComponentName(instance, key) {
 }
 
 function getComponentTypeName(options) {
-  const name = options.name || options._componentTag || options.__vdevtools_guessedName;
+  return options.name || options._componentTag || options.__vdevtools_guessedName || options.__name;
+}
 
-  if (name) {
-    return name;
-  }
-
+function getComponentFileName(options) {
   const file = options.__file; // injected by vue-loader
 
   if (file) {
@@ -7837,7 +7871,7 @@ const internalSharedData = {
   vuexGroupGettersByModule: true,
   showMenuScrollTip: true,
   timelineTimeGrid: true,
-  timelineScreenshots: true,
+  timelineScreenshots: false,
   menuStepScrolling: env_1.isMac,
   pluginPermissions: {},
   pluginSettings: {},
@@ -8298,7 +8332,7 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.isEmptyObject = exports.copyToClipboard = exports.escape = exports.openInEditor = exports.focusInput = exports.simpleGet = exports.sortByKey = exports.searchDeepInObject = exports.isPlainObject = exports.revive = exports.parse = exports.getCustomRefDetails = exports.getCustomHTMLElementDetails = exports.getCustomFunctionDetails = exports.getCustomComponentDefinitionDetails = exports.getComponentName = exports.reviveSet = exports.getCustomSetDetails = exports.reviveMap = exports.getCustomMapDetails = exports.stringify = exports.specialTokenToString = exports.MAX_ARRAY_SIZE = exports.MAX_STRING_SIZE = exports.SPECIAL_TOKENS = exports.NAN = exports.NEGATIVE_INFINITY = exports.INFINITY = exports.UNDEFINED = exports.inDoc = exports.getComponentDisplayName = exports.kebabize = exports.camelize = exports.classify = void 0;
+exports.isEmptyObject = exports.copyToClipboard = exports.escape = exports.openInEditor = exports.focusInput = exports.simpleGet = exports.sortByKey = exports.searchDeepInObject = exports.isPlainObject = exports.revive = exports.parse = exports.getCustomRefDetails = exports.getCustomHTMLElementDetails = exports.getCustomFunctionDetails = exports.getCustomComponentDefinitionDetails = exports.getComponentName = exports.getCustomBigIntDetails = exports.reviveSet = exports.getCustomSetDetails = exports.reviveMap = exports.getCustomMapDetails = exports.stringify = exports.specialTokenToString = exports.MAX_ARRAY_SIZE = exports.MAX_STRING_SIZE = exports.SPECIAL_TOKENS = exports.NAN = exports.NEGATIVE_INFINITY = exports.INFINITY = exports.UNDEFINED = exports.inDoc = exports.getComponentDisplayName = exports.kebabize = exports.camelize = exports.classify = void 0;
 
 const path_1 = __importDefault(__webpack_require__(21023));
 
@@ -8518,6 +8552,8 @@ function replacerForInternal(key) {
     return getCustomFunctionDetails(val);
   } else if (type === 'symbol') {
     return `[native Symbol ${Symbol.prototype.toString.call(val)}]`;
+  } else if (type === 'bigint') {
+    return getCustomBigIntDetails(val);
   } else if (val !== null && type === 'object') {
     const proto = Object.prototype.toString.call(val);
 
@@ -8650,7 +8686,20 @@ function reviveSet(val) {
   return result;
 }
 
-exports.reviveSet = reviveSet; // Use a custom basename functions instead of the shimed version
+exports.reviveSet = reviveSet;
+
+function getCustomBigIntDetails(val) {
+  const stringifiedBigInt = BigInt.prototype.toString.call(val);
+  return {
+    _custom: {
+      type: 'bigint',
+      display: `BigInt(${stringifiedBigInt})`,
+      value: stringifiedBigInt
+    }
+  };
+}
+
+exports.getCustomBigIntDetails = getCustomBigIntDetails; // Use a custom basename functions instead of the shimed version
 // because it doesn't work on Windows
 
 function basename(filename, ext) {
@@ -8830,6 +8879,8 @@ function revive(val) {
       return reviveMap(val);
     } else if (custom.type === 'set') {
       return reviveSet(val);
+    } else if (custom.type === 'bigint') {
+      return BigInt(custom.value);
     } else if (custom._reviveId) {
       return reviveCache.read(custom._reviveId);
     } else {
