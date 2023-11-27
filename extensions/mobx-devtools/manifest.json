@@ -38,6 +38,6 @@
   "version": "0.9.26",
   "version_name": "0.9.26",
   "host_permissions": [
-    "*://*/*"
+    "<all_urls>"
   ]
 }
