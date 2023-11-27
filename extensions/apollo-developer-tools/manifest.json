@@ -30,5 +30,8 @@
       "run_at": "document_start"
     }
   ],
-  "manifest_version": 2
+  "manifest_version": 2,
+  "host_permissions": [
+    "*://*/*"
+  ]
 }

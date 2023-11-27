@@ -11,7 +11,7 @@
   },
   "permissions": [
     "storage",
-    "<all_urls>"
+    "scripting"
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
@@ -70,5 +70,8 @@
         "*://*/*"
       ]
     }
+  ],
+  "host_permissions": [
+    "*://*/*"
   ]
 }

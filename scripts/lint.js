@@ -55,8 +55,10 @@ function removeUnSupportManifest(extensionPath) {
     }
 
     if ("permissions" in manifestContent) {
-        manifestContent["permissions"] = ["storage", "<all_urls>"];
+        manifestContent["permissions"] = ["storage", "scripting"];
     }
+
+    manifestContent["host_permissions"] = ["*://*/*"];
 
     fs.writeFileSync(manifestPath, JSON.stringify(manifestContent, null, 2));
 }

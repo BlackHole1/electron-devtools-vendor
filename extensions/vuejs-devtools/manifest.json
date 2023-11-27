@@ -23,7 +23,7 @@
   },
   "permissions": [
     "storage",
-    "<all_urls>"
+    "scripting"
   ],
   "content_scripts": [
     {
@@ -45,5 +45,8 @@
       "run_at": "document_idle"
     }
   ],
-  "content_security_policy": "script-src 'self'; object-src 'self'"
+  "content_security_policy": "script-src 'self'; object-src 'self'",
+  "host_permissions": [
+    "*://*/*"
+  ]
 }

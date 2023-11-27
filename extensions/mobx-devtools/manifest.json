@@ -22,7 +22,7 @@
   },
   "permissions": [
     "storage",
-    "<all_urls>"
+    "scripting"
   ],
   "content_scripts": [
     {
@@ -36,5 +36,8 @@
     }
   ],
   "version": "0.9.26",
-  "version_name": "0.9.26"
+  "version_name": "0.9.26",
+  "host_permissions": [
+    "*://*/*"
+  ]
 }
