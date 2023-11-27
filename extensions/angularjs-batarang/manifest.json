@@ -6,7 +6,7 @@
   "manifest_version": 2,
   "permissions": [
     "storage",
-    "<all_urls>"
+    "scripting"
   ],
   "icons": {
     "16": "img/webstore-icon.png",
@@ -31,5 +31,8 @@
   },
   "web_accessible_resources": [
     "dist/hint.js"
+  ],
+  "host_permissions": [
+    "*://*/*"
   ]
 }

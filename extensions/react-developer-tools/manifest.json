@@ -41,10 +41,10 @@
   },
   "permissions": [
     "storage",
-    "<all_urls>"
+    "scripting"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "*://*/*"
   ],
   "content_scripts": [
     {

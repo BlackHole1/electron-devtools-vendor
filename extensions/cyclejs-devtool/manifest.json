@@ -27,7 +27,10 @@
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "permissions": [
     "storage",
-    "<all_urls>"
+    "scripting"
   ],
-  "manifest_version": 2
+  "manifest_version": 2,
+  "host_permissions": [
+    "*://*/*"
+  ]
 }
