@@ -5,6 +5,12 @@ object-assign
 */
 
 /*!
+  * vue-router v4.2.5
+  * (c) 2023 Eduardo San Martin Morote
+  * @license MIT
+  */
+
+/*!
  * @pixi/app - v6.5.4
  * Compiled Wed, 21 Sep 2022 14:49:15 UTC
  *
@@ -194,12 +200,6 @@ object-assign
  *
  * @pixi/utils is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
- */
-
-/*!
- * Vue.js v2.7.10
- * (c) 2014-2022 Evan You
- * Released under the MIT License.
  */
 
 /*!

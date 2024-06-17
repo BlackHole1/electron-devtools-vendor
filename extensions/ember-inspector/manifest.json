@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Ember Inspector",
   "description": "Tool for debugging Ember applications.",
-  "version": "4.10.3",
+  "version": "4.11.0",
   "icons": {
     "16": "panes-3-16-0/assets/images/icon16.png",
     "38": "panes-3-16-0/assets/images/icon38.png",
@@ -12,6 +12,9 @@
   "permissions": [
     "storage",
     "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
@@ -70,8 +73,5 @@
         "*://*/*"
       ]
     }
-  ],
-  "host_permissions": [
-    "<all_urls>"
   ]
 }

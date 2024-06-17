@@ -5904,10 +5904,8 @@ define("ember-debug/libs/render-tree", ["exports", "ember-debug/libs/capture-ren
     constructor(owner) {
       this.nodeMap = new Map();
       this.remoteRoots = [];
-      this.currentNode = null;
-      this.nodeStack = [];
-      this.remoteNodeStack = [];
       this.runtime = this.require('@glimmer/runtime');
+      this.reference = this.require('@glimmer/reference');
       try {
         this.Wormhole = requireModule('ember-wormhole/components/ember-wormhole');
       } catch (e) {
@@ -5920,100 +5918,107 @@ define("ember-debug/libs/render-tree", ["exports", "ember-debug/libs/capture-ren
     reset() {
       this.nodeMap.clear();
       this.remoteRoots.length = 0;
-      this.nodeStack.length = 0;
-      this.remoteNodeStack.length = 0;
-      this.currentRemoteNode = null;
-      this.currentNode = null;
-    }
-    buildInElementNode(node) {
-      const obj = Object.create(null);
-      obj.index = this.currentNode?.refs?.size || 0;
-      obj.name = 'in-element';
-      obj.type = 'component';
-      obj.template = null;
-      obj.isRemote = true;
-      obj.args = {
-        positional: [],
-        named: {
-          destination: node
-        }
-      };
-      obj.instance = {
-        args: obj.args.named,
-        constructor: {
-          name: 'InElement'
-        }
-      };
-      obj.bounds = {
-        firstNode: node,
-        lastNode: node,
-        parentElement: node.parentElement
-      };
-      obj.children = [];
-      return obj;
     }
     patch() {
       const self = this;
-      const captureNode = this.debugRenderTree.captureNode;
-      this.debugRenderTree.captureNode = function (...args) {
-        const capture = captureNode.call(this, ...args);
-        const [id, state] = args;
-        const node = this.nodeFor(state);
-        self.setupNodeRemotes(node, id, capture);
-        return capture;
-      };
-      const enter = this.debugRenderTree.enter;
-      this.debugRenderTree.enter = function (...args) {
-        const state = args[0];
-        self.enter(this.nodeFor(state));
-        return enter.call(this, ...args);
+      const NewElementBuilder = this.NewElementBuilder;
+      const remoteStack = [];
+      const componentStack = [];
+      function createRef(value) {
+        if (self.reference.createUnboundRef) {
+          return self.reference.createUnboundRef(value);
+        } else {
+          return value;
+        }
+      }
+      const appendChild = this.debugRenderTree.appendChild;
+      this.debugRenderTree.appendChild = function (node, state) {
+        if (node.type === 'component') {
+          componentStack.push(node);
+        }
+        return appendChild.call(this, node, state);
       };
       const exit = this.debugRenderTree.exit;
-      this.debugRenderTree.exit = function (...args) {
-        self.exit();
-        return exit.call(this, ...args);
+      this.debugRenderTree.exit = function (state) {
+        const node = this.nodeFor(this.stack.current);
+        if (node?.type === 'component') {
+          componentStack.pop();
+        }
+        exit.call(this, state);
       };
-      const NewElementBuilder = this.NewElementBuilder;
       const didAppendNode = NewElementBuilder.prototype.didAppendNode;
       NewElementBuilder.prototype.didAppendNode = function (...args) {
-        args[0].__emberInspectorParentNode = self.currentNode;
+        args[0].__emberInspectorParentNode = componentStack.at(-1);
         return didAppendNode.call(this, ...args);
       };
       const pushElement = NewElementBuilder.prototype.pushElement;
       NewElementBuilder.prototype.pushElement = function (...args) {
-        args[0].__emberInspectorParentNode = self.currentNode;
-        return pushElement.call(this, ...args);
+        pushElement.call(this, ...args);
+        args[0].__emberInspectorParentNode = componentStack.at(-1);
       };
       const pushRemoteElement = NewElementBuilder.prototype.pushRemoteElement;
-      NewElementBuilder.prototype.pushRemoteElement = function (...args) {
-        const block = pushRemoteElement.call(this, ...args);
-        self.registerRemote(block, ...args);
-        self.nodeStack.push(self.currentNode);
-        self.remoteNodeStack.push(self.currentNode);
-        self.currentRemoteNode = self.currentNode;
-        return block;
+      NewElementBuilder.prototype.pushRemoteElement = function (element, guid, insertBefore) {
+        remoteStack.push({
+          element
+        });
+        const ref = createRef(element);
+        const capturedArgs = {
+          positional: [ref],
+          named: {}
+        };
+        if (insertBefore) {
+          capturedArgs.named.insertBefore = insertBefore;
+        }
+        const inElementArgs = self.reference.createUnboundRef ? capturedArgs : {
+          value() {
+            return capturedArgs;
+          }
+        };
+        const debugRenderTree = self.debugRenderTree;
+        debugRenderTree?.create(remoteStack.at(-1), {
+          type: 'keyword',
+          name: 'in-element',
+          args: inElementArgs,
+          instance: {
+            args: {
+              named: {
+                insertBefore
+              },
+              positional: [element]
+            },
+            constructor: {
+              name: 'InElement'
+            }
+          }
+        });
+        return pushRemoteElement.call(this, element, guid, insertBefore);
       };
       const popRemoteElement = NewElementBuilder.prototype.popRemoteElement;
       NewElementBuilder.prototype.popRemoteElement = function (...args) {
-        const block = popRemoteElement.call(this, ...args);
-        self.remoteNodeStack.pop();
-        self.nodeStack.pop();
-        self.currentRemoteNode = self.remoteNodeStack[self.remoteNodeStack.length - 1];
-        return block;
+        const element = this.element;
+        popRemoteElement.call(this, ...args);
+        const parentElement = this.element;
+        const debugRenderTree = self.debugRenderTree;
+        debugRenderTree?.didRender(remoteStack.at(-1), {
+          parentElement: () => parentElement,
+          firstNode: () => element,
+          lastNode: () => element
+        });
+        remoteStack.pop();
       };
       this.debugRenderTreeFunctions = {
-        exit,
-        enter,
-        captureNode
+        appendChild,
+        exit
       };
       this.NewElementBuilderFunctions = {
         pushElement,
         pushRemoteElement,
+        popRemoteElement,
         didAppendNode
       };
     }
     teardown() {
-      if (!this.debugRenderTreeFunctions) {
+      if (!this.NewElementBuilderFunctions) {
         return;
       }
       Object.assign(this.debugRenderTree, this.debugRenderTreeFunctions);
@@ -6021,72 +6026,6 @@ define("ember-debug/libs/render-tree", ["exports", "ember-debug/libs/capture-ren
     }
     require(req) {
       return requireModule.has(req) ? requireModule(req) : _loader.EmberLoader.require(req);
-    }
-    enter(node) {
-      if (this.currentNode && this.currentNode === this.currentRemoteNode) {
-        this.currentRemoteNode.children.push(node);
-        node.remoteParent = this.currentRemoteNode;
-      }
-      this.currentNode = node;
-      this.nodeStack.push(this.currentNode);
-    }
-    exit() {
-      this.nodeStack.pop();
-      this.currentNode = this.nodeStack[this.nodeStack.length - 1];
-    }
-    registerRemote(block, node) {
-      const obj = this.buildInElementNode(node);
-      if (this.currentNode) {
-        this.currentNode.remotes = this.currentNode.remotes || [];
-        this.currentNode.remotes.push(obj);
-      }
-      this.remoteRoots.push(obj);
-      this.currentNode = obj;
-    }
-    setupNodeRemotes(node, id, capture) {
-      capture.isInRemote = !!node.remoteParent;
-      this.nodeMap.set(node, id);
-      if (node.remoteParent) {
-        const idx = node.remoteParent.children.indexOf(node);
-        if (idx >= 0) {
-          node.remoteParent.children[idx] = capture;
-        }
-      }
-      capture.children = capture.children.filter(c => !c.isInRemote);
-      node.remotes?.forEach(remote => {
-        remote.id = 'remote-render-node:' + this.remoteRoots.length;
-        this.nodeMap.set(remote, remote.id);
-        this.remoteRoots.push(remote);
-        capture.children.splice(remote.index, 0, remote);
-      });
-      if (capture.instance?.__emberInspectorTargetNode) {
-        Object.defineProperty(capture, 'bounds', {
-          get() {
-            return {
-              firstNode: capture.instance.__emberInspectorTargetNode,
-              lastNode: capture.instance.__emberInspectorTargetNode,
-              parentElement: capture.instance.__emberInspectorTargetNode.parentElement
-            };
-          }
-        });
-      }
-      if (this.Wormhole && capture.instance instanceof this.Wormhole.default) {
-        this.remoteRoots.push(capture);
-        const bounds = capture.bounds;
-        Object.defineProperty(capture, 'bounds', {
-          get() {
-            if (capture.instance._destination) {
-              return {
-                firstNode: capture.instance._destination,
-                lastNode: capture.instance._destination,
-                parentElement: capture.instance._destination.parentElement
-              };
-            }
-            return bounds;
-          }
-        });
-      }
-      return capture;
     }
   }
   class RenderTree {
@@ -6112,6 +6051,7 @@ define("ember-debug/libs/render-tree", ["exports", "ember-debug/libs/capture-ren
       try {
         this.inElementSupport = new InElementSupportProvider(owner);
       } catch (e) {
+        console.error('failed to setup in element support', e);
         // not supported
       }
 
@@ -6190,7 +6130,7 @@ define("ember-debug/libs/render-tree", ["exports", "ember-debug/libs/capture-ren
       let hintNode = this._findUp(this.nodes[hint]);
       let hints = [hintNode];
       if (node.__emberInspectorParentNode) {
-        const remoteNode = this.inElementSupport.nodeMap.get(node);
+        const remoteNode = this.inElementSupport?.nodeMap.get(node);
         const n = remoteNode && this.nodes[remoteNode];
         hints.push(n);
       }
@@ -6336,6 +6276,27 @@ define("ember-debug/libs/render-tree", ["exports", "ember-debug/libs/capture-ren
       let serialized = this.serialized[node.id];
       if (serialized === undefined) {
         this.nodes[node.id] = node;
+        if (node.type === 'keyword') {
+          node.type = 'component';
+          this.inElementSupport?.nodeMap.set(node, node.id);
+          this.inElementSupport?.remoteRoots.push(node);
+        }
+        if (this.inElementSupport?.Wormhole && node.instance instanceof this.inElementSupport.Wormhole.default) {
+          this.inElementSupport?.remoteRoots.push(node);
+          const bounds = node.bounds;
+          Object.defineProperty(node, 'bounds', {
+            get() {
+              if (node.instance._destination) {
+                return {
+                  firstNode: node.instance._destination,
+                  lastNode: node.instance._destination,
+                  parentElement: node.instance._destination.parentElement
+                };
+              }
+              return bounds;
+            }
+          });
+        }
         if (parentNode) {
           this.parentNodes[node.id] = parentNode;
         }
@@ -6496,11 +6457,10 @@ define("ember-debug/libs/render-tree", ["exports", "ember-debug/libs/capture-ren
     return firstNode === lastNode;
   }
   function isAttached({
-    parentElement,
     firstNode,
     lastNode
   }) {
-    return parentElement === firstNode.parentElement && parentElement === lastNode.parentElement;
+    return firstNode.isConnected && lastNode.isConnected;
   }
   function isEmptyRect({
     x,
@@ -8016,19 +7976,20 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
     }
     const subtags = tag.subtags || (Array.isArray(tag.subtag) ? tag.subtag : []);
     if (tag.subtag && !Array.isArray(tag.subtag)) {
-      if (tag.subtag._propertyKey) props.push((tag.subtag._object ? (0, _getObjectName.default)(tag.subtag._object) + '.' : '') + tag.subtag._propertyKey);
+      if (tag.subtag._propertyKey) props.push(tag.subtag);
       props.push(...getTagTrackedProps(tag.subtag, ownTag, level + 1));
     }
     if (subtags) {
       subtags.forEach(t => {
         if (t === ownTag) return;
-        if (t._propertyKey) props.push((t._object ? (0, _getObjectName.default)(t._object) + '.' : '') + t._propertyKey);
+        if (t._propertyKey) props.push(t);
         props.push(...getTagTrackedProps(t, ownTag, level + 1));
       });
     }
     return props;
   }
-  function getTrackedDependencies(object, property, tag) {
+  function getTrackedDependencies(object, property, tagInfo) {
+    const tag = tagInfo.tag;
     const proto = Object.getPrototypeOf(object);
     if (!proto) return [];
     const cpDesc = emberMeta(object).peekDescriptors(property);
@@ -8040,20 +8001,29 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
       const ownTag = tagForProperty(object, property);
       const props = getTagTrackedProps(tag, ownTag);
       const mapping = {};
-      props.forEach(p => {
+      let maxRevision = tagInfo.revision ?? 0;
+      let minRevision = Infinity;
+      props.forEach(t => {
+        const p = (t._object ? (0, _getObjectName.default)(t._object) + '.' : '') + t._propertyKey;
         const [objName, ...props] = p.split('.');
         mapping[objName] = mapping[objName] || new Set();
-        props.forEach(p => mapping[objName].add(p));
+        maxRevision = Math.max(maxRevision, t.revision);
+        minRevision = Math.min(minRevision, t.revision);
+        props.forEach(p => mapping[objName].add([p, t.revision]));
       });
+      const hasChange = maxRevision !== minRevision;
       Object.entries(mapping).forEach(([objName, props]) => {
         if (props.size > 1) {
           dependentKeys.push(objName);
           props.forEach(p => {
-            dependentKeys.push('  •  --  ' + p);
+            const changed = hasChange && p[1] >= maxRevision ? ' 🔸' : '';
+            dependentKeys.push('  •  --  ' + p[0] + changed);
           });
         }
         if (props.size === 1) {
-          dependentKeys.push(objName + '.' + [...props][0]);
+          const p = [...props][0];
+          const changed = hasChange && p[1] >= maxRevision ? ' 🔸' : '';
+          dependentKeys.push(objName + '.' + p[0] + changed);
         }
         if (props.size === 0) {
           dependentKeys.push(objName);
@@ -8118,7 +8088,6 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
                   tagInfo.tag = track(() => {
                     value = object.get?.(item.name) || object[item.name];
                   });
-                  tagInfo.revision = tagValue(tagInfo.tag);
                 }
                 tracked[item.name] = tagInfo;
               } else {
@@ -8133,7 +8102,8 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
                 value.isCalculated = true;
                 let dependentKeys = null;
                 if (tracked[item.name]) {
-                  dependentKeys = getTrackedDependencies(object, item.name, tracked[item.name].tag);
+                  dependentKeys = getTrackedDependencies(object, item.name, tracked[item.name]);
+                  tracked[item.name].revision = tagValue(tracked[item.name].tag);
                 }
                 this.sendMessage('updateProperty', {
                   objectId,
@@ -8748,8 +8718,8 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
                   item.isTracked = true;
                 }
               }
+              item.dependentKeys = getTrackedDependencies(object, item.name, tagInfo);
               tagInfo.revision = tagValue(tagInfo.tag);
-              item.dependentKeys = getTrackedDependencies(object, item.name, tagInfo.tag);
             } else {
               value = calculateCP(object, item, errorsForObject);
             }
@@ -8909,7 +8879,7 @@ define("ember-debug/object-inspector", ["exports", "ember-debug/debug-port", "em
       if (object instanceof _ember.default.ArrayProxy && property == parseInt(property)) {
         return object.objectAt(property);
       }
-      return item.isGetter || property.includes('.') ? object[property] : object.get?.(property) || object[property]; // need to use `get` to be able to detect tracked props
+      return item.isGetter || property.includes?.('.') ? object[property] : object.get?.(property) || object[property]; // need to use `get` to be able to detect tracked props
     } catch (error) {
       errorsForObject[property] = {
         property,
@@ -9318,19 +9288,30 @@ define("ember-debug/route-debug", ["exports", "ember-debug/debug-port", "ember-d
     value: true
   });
   _exports.default = void 0;
-  /* eslint-disable ember/no-private-routing-service */
-
+  var _class;
+  function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+  function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof key === "symbol" ? key : String(key); }
+  function _toPrimitive(input, hint) { if (typeof input !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof res !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); } /* eslint-disable ember/no-private-routing-service */
   const {
     hasOwnProperty
   } = Object.prototype;
-  class _class extends _debugPort.default {
+  class RouteDebug extends _debugPort.default {
+    constructor(...args) {
+      super(...args);
+      _defineProperty(this, "_cachedRouteTree", null);
+    }
     init() {
       super.init();
       this.__currentURL = this.currentURL;
+      this.__currentRouter = this.router;
       this.observer = setInterval(() => {
         if (this.__currentURL !== this.currentURL) {
           this.sendCurrentRoute();
           this.__currentURL = this.currentURL;
+        }
+        if (this.__currentRouter !== this.router) {
+          this._cachedRouteTree = null;
+          this.__currentRouter = this.router;
         }
       }, 150);
     }
@@ -9368,20 +9349,23 @@ define("ember-debug/route-debug", ["exports", "ember-debug/debug-port", "ember-d
       }, 50);
     }
     get routeTree() {
-      const router = this.router;
-      const routerLib = router._routerMicrolib || router.router;
-      let routeNames = routerLib.recognizer.names;
-      let routeTree = {};
-      for (let routeName in routeNames) {
-        if (!hasOwnProperty.call(routeNames, routeName)) {
-          continue;
+      if (!this._cachedRouteTree) {
+        const router = this.router;
+        const routerLib = router._routerMicrolib || router.router;
+        let routeNames = routerLib.recognizer.names;
+        let routeTree = {};
+        for (let routeName in routeNames) {
+          if (!hasOwnProperty.call(routeNames, routeName)) {
+            continue;
+          }
+          let route = routeNames[routeName];
+          buildSubTree.call(this, routeTree, route);
         }
-        let route = routeNames[routeName];
-        buildSubTree.call(this, routeTree, route);
+        this._cachedRouteTree = arrayizeChildren({
+          children: routeTree
+        });
       }
-      return arrayizeChildren({
-        children: routeTree
-      });
+      return this._cachedRouteTree;
     }
     sendTree() {
       const routeTree = this.routeTree;
@@ -9443,9 +9427,11 @@ define("ember-debug/route-debug", ["exports", "ember-debug/debug-port", "ember-d
    *
    * @param {*} routeTree
    * @param {*} route
+   * @this {RouteDebug}
    * @return {Void}
    */
-  _exports.default = _class;
+  _exports.default = RouteDebug;
+  _class = RouteDebug;
   (() => {
     _class.prototype.portNamespace = 'route';
     _class.prototype.messages = {
@@ -9496,7 +9482,7 @@ define("ember-debug/route-debug", ["exports", "ember-debug/debug-port", "ember-d
         // Skip when route is an unresolved promise
         if (typeof routeHandler?.then === 'function') {
           // ensure we rebuild the route tree when this route is resolved
-          routeHandler.then(() => this.notifyPropertyChange('routeTree'));
+          routeHandler.then(() => this._cachedRouteTree = null);
           controllerName = '(unresolved)';
           controllerClassName = '(unresolved)';
           templateName = '(unresolved)';
@@ -9674,7 +9660,9 @@ define("ember-debug/utils/base-object", ["exports"], function (_exports) {
       this.init();
     }
     init() {}
-    willDestroy() {}
+    willDestroy() {
+      this.isDestroying = true;
+    }
     destroy() {
       this.willDestroy();
       this.isDestroyed = true;
@@ -10602,7 +10590,7 @@ define("ember-debug/view-debug", ["exports", "ember-debug/debug-port", "ember-de
       }, 250);
     }
     send() {
-      if (this.isDestroying) {
+      if (this.isDestroying || this.isDestroyed) {
         return;
       }
       this.sendMessage('renderTree', {
